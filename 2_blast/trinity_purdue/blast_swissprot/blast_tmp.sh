@@ -4,7 +4,7 @@
 #SBATCH --exclusive
 #SBATCH -A standby
 #SBATCH --time=4:00:00
-#SBATCH --job-name=blastx
+#SBATCH --job-name=blastx_tmp
 #SBATCH --error=%x-%J-%u.err
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --mail-type=ALL
