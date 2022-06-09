@@ -1,0 +1,86 @@
+#!/bin/bash
+
+#SBATCH --job-name=4_stringtie_calpoly
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 4
+#SBATCH -t 14-00:00:00
+#SBATCH --exclusive
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+
+cd /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades # set this if not using sed in Makefile
+module load biocontainers
+module load stringtie/2.1.7
+
+# create assembly per sample
+stringtie calpoly001.sorted.bam -l s2 -p 4 -o calpoly001.sorted.bam.gtf
+stringtie calpoly002.sorted.bam -l s2 -p 4 -o calpoly002.sorted.bam.gtf
+stringtie calpoly003.sorted.bam -l s2 -p 4 -o calpoly003.sorted.bam.gtf
+stringtie calpoly004.sorted.bam -l s2 -p 4 -o calpoly004.sorted.bam.gtf
+stringtie calpoly005.sorted.bam -l s2 -p 4 -o calpoly005.sorted.bam.gtf
+stringtie calpoly006.sorted.bam -l s2 -p 4 -o calpoly006.sorted.bam.gtf
+stringtie calpoly007.sorted.bam -l s2 -p 4 -o calpoly007.sorted.bam.gtf
+stringtie calpoly008.sorted.bam -l s2 -p 4 -o calpoly008.sorted.bam.gtf
+stringtie calpoly009.sorted.bam -l s2 -p 4 -o calpoly009.sorted.bam.gtf
+stringtie calpoly010.sorted.bam -l s2 -p 4 -o calpoly010.sorted.bam.gtf
+stringtie calpoly011.sorted.bam -l s2 -p 4 -o calpoly011.sorted.bam.gtf
+stringtie calpoly012.sorted.bam -l s2 -p 4 -o calpoly012.sorted.bam.gtf
+stringtie calpoly013.sorted.bam -l s2 -p 4 -o calpoly013.sorted.bam.gtf
+stringtie calpoly014.sorted.bam -l s2 -p 4 -o calpoly014.sorted.bam.gtf
+stringtie calpoly015.sorted.bam -l s2 -p 4 -o calpoly015.sorted.bam.gtf
+stringtie calpoly016.sorted.bam -l s2 -p 4 -o calpoly016.sorted.bam.gtf
+stringtie calpoly017.sorted.bam -l s2 -p 4 -o calpoly017.sorted.bam.gtf
+stringtie calpoly018.sorted.bam -l s2 -p 4 -o calpoly018.sorted.bam.gtf
+stringtie calpoly019.sorted.bam -l s2 -p 4 -o calpoly019.sorted.bam.gtf
+stringtie calpoly020.sorted.bam -l s2 -p 4 -o calpoly020.sorted.bam.gtf
+stringtie calpoly021.sorted.bam -l s2 -p 4 -o calpoly021.sorted.bam.gtf
+stringtie calpoly022.sorted.bam -l s2 -p 4 -o calpoly022.sorted.bam.gtf
+stringtie calpoly023.sorted.bam -l s2 -p 4 -o calpoly023.sorted.bam.gtf
+stringtie calpoly024.sorted.bam -l s2 -p 4 -o calpoly024.sorted.bam.gtf
+stringtie calpoly025.sorted.bam -l s2 -p 4 -o calpoly025.sorted.bam.gtf
+stringtie calpoly026.sorted.bam -l s2 -p 4 -o calpoly026.sorted.bam.gtf
+stringtie calpoly027.sorted.bam -l s2 -p 4 -o calpoly027.sorted.bam.gtf
+stringtie calpoly028.sorted.bam -l s2 -p 4 -o calpoly028.sorted.bam.gtf
+stringtie calpoly029.sorted.bam -l s2 -p 4 -o calpoly029.sorted.bam.gtf
+stringtie calpoly030.sorted.bam -l s2 -p 4 -o calpoly030.sorted.bam.gtf
+stringtie calpoly031.sorted.bam -l s2 -p 4 -o calpoly031.sorted.bam.gtf
+stringtie calpoly032.sorted.bam -l s2 -p 4 -o calpoly032.sorted.bam.gtf
+stringtie calpoly033.sorted.bam -l s2 -p 4 -o calpoly033.sorted.bam.gtf
+stringtie calpoly034.sorted.bam -l s2 -p 4 -o calpoly034.sorted.bam.gtf
+stringtie calpoly035.sorted.bam -l s2 -p 4 -o calpoly035.sorted.bam.gtf
+stringtie calpoly036.sorted.bam -l s2 -p 4 -o calpoly036.sorted.bam.gtf
+stringtie calpoly037.sorted.bam -l s2 -p 4 -o calpoly037.sorted.bam.gtf
+stringtie calpoly038.sorted.bam -l s2 -p 4 -o calpoly038.sorted.bam.gtf
+stringtie calpoly039.sorted.bam -l s2 -p 4 -o calpoly039.sorted.bam.gtf
+stringtie calpoly040.sorted.bam -l s2 -p 4 -o calpoly040.sorted.bam.gtf
+stringtie calpoly041.sorted.bam -l s2 -p 4 -o calpoly041.sorted.bam.gtf
+stringtie calpoly042.sorted.bam -l s2 -p 4 -o calpoly042.sorted.bam.gtf
+stringtie calpoly043.sorted.bam -l s2 -p 4 -o calpoly043.sorted.bam.gtf
+stringtie calpoly044.sorted.bam -l s2 -p 4 -o calpoly044.sorted.bam.gtf
+stringtie calpoly045.sorted.bam -l s2 -p 4 -o calpoly045.sorted.bam.gtf
+stringtie calpoly046.sorted.bam -l s2 -p 4 -o calpoly046.sorted.bam.gtf
+stringtie calpoly047.sorted.bam -l s2 -p 4 -o calpoly047.sorted.bam.gtf
+stringtie calpoly048.sorted.bam -l s2 -p 4 -o calpoly048.sorted.bam.gtf
+stringtie calpoly049.sorted.bam -l s2 -p 4 -o calpoly049.sorted.bam.gtf
+stringtie calpoly050.sorted.bam -l s2 -p 4 -o calpoly050.sorted.bam.gtf
+stringtie calpoly051.sorted.bam -l s2 -p 4 -o calpoly051.sorted.bam.gtf
+stringtie calpoly052.sorted.bam -l s2 -p 4 -o calpoly052.sorted.bam.gtf
+stringtie calpoly053.sorted.bam -l s2 -p 4 -o calpoly053.sorted.bam.gtf
+stringtie calpoly054.sorted.bam -l s2 -p 4 -o calpoly054.sorted.bam.gtf
+stringtie calpoly055.sorted.bam -l s2 -p 4 -o calpoly055.sorted.bam.gtf
+stringtie calpoly056.sorted.bam -l s2 -p 4 -o calpoly056.sorted.bam.gtf
+stringtie calpoly057.sorted.bam -l s2 -p 4 -o calpoly057.sorted.bam.gtf
+stringtie calpoly058.sorted.bam -l s2 -p 4 -o calpoly058.sorted.bam.gtf
+stringtie calpoly059.sorted.bam -l s2 -p 4 -o calpoly059.sorted.bam.gtf
+stringtie calpoly060.sorted.bam -l s2 -p 4 -o calpoly060.sorted.bam.gtf
+stringtie calpoly061.sorted.bam -l s2 -p 4 -o calpoly061.sorted.bam.gtf
+stringtie calpoly062.sorted.bam -l s2 -p 4 -o calpoly062.sorted.bam.gtf
+stringtie calpoly063.sorted.bam -l s2 -p 4 -o calpoly063.sorted.bam.gtf
+stringtie calpoly064.sorted.bam -l s2 -p 4 -o calpoly064.sorted.bam.gtf
+stringtie calpoly065.sorted.bam -l s2 -p 4 -o calpoly065.sorted.bam.gtf
+stringtie calpoly066.sorted.bam -l s2 -p 4 -o calpoly066.sorted.bam.gtf
+stringtie calpoly067.sorted.bam -l s2 -p 4 -o calpoly067.sorted.bam.gtf
+stringtie calpoly068.sorted.bam -l s2 -p 4 -o calpoly068.sorted.bam.gtf
+stringtie calpoly069.sorted.bam -l s2 -p 4 -o calpoly069.sorted.bam.gtf
+stringtie calpoly070.sorted.bam -l s2 -p 4 -o calpoly070.sorted.bam.gtf

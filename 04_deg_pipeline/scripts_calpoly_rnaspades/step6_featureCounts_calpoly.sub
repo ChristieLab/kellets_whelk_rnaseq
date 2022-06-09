@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=6_subread_kw_full
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 20
+#SBATCH -t 14-00:00:00
+#SBATCH --exclusive
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+
+module purge
+module load biocontainers
+module load subread/2.0.1
+
+cd /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades
+
+# -p = is paired-end; -B = require that fragments have both ends successfully aligned; -C
+# = chimeric fragments (ends mapped to 2 different chroms) not counted
+
+featureCounts -p -B -C -T 20 -t exon -g gene_id -a stringtie_all_merged_calpoly_rnaspades.gtf -o featureCount_counts.txt calpoly001.sorted.bam calpoly002.sorted.bam calpoly003.sorted.bam calpoly004.sorted.bam calpoly005.sorted.bam calpoly006.sorted.bam calpoly007.sorted.bam calpoly008.sorted.bam calpoly009.sorted.bam calpoly010.sorted.bam calpoly011.sorted.bam calpoly012.sorted.bam calpoly013.sorted.bam calpoly014.sorted.bam calpoly015.sorted.bam calpoly016.sorted.bam calpoly017.sorted.bam calpoly018.sorted.bam calpoly019.sorted.bam calpoly020.sorted.bam calpoly021.sorted.bam calpoly022.sorted.bam calpoly023.sorted.bam calpoly024.sorted.bam calpoly025.sorted.bam calpoly026.sorted.bam calpoly027.sorted.bam calpoly028.sorted.bam calpoly029.sorted.bam calpoly030.sorted.bam calpoly031.sorted.bam calpoly032.sorted.bam calpoly033.sorted.bam calpoly034.sorted.bam calpoly035.sorted.bam calpoly036.sorted.bam calpoly037.sorted.bam calpoly038.sorted.bam calpoly039.sorted.bam calpoly040.sorted.bam calpoly041.sorted.bam calpoly042.sorted.bam calpoly043.sorted.bam calpoly044.sorted.bam calpoly045.sorted.bam calpoly046.sorted.bam calpoly047.sorted.bam calpoly048.sorted.bam calpoly049.sorted.bam calpoly050.sorted.bam calpoly051.sorted.bam calpoly052.sorted.bam calpoly053.sorted.bam calpoly054.sorted.bam calpoly055.sorted.bam calpoly056.sorted.bam calpoly057.sorted.bam calpoly058.sorted.bam calpoly059.sorted.bam calpoly060.sorted.bam calpoly061.sorted.bam calpoly062.sorted.bam calpoly063.sorted.bam calpoly064.sorted.bam calpoly065.sorted.bam calpoly066.sorted.bam calpoly067.sorted.bam calpoly068.sorted.bam calpoly069.sorted.bam calpoly070.sorted.bam

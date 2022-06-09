@@ -1,0 +1,69 @@
+#!/bin/bash
+
+#SBATCH --job-name=3_samsort_full
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 20
+#SBATCH --exclusive 
+#SBATCH -t 14-00:00:00
+
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+
+cd /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades # set this if not using sed in Makefile
+
+module load bioinfo
+module load samtools/1.8
+
+samtools view -Su calpoly001.sam | samtools sort -o calpoly001.sorted.bam
+samtools view -Su calpoly002.sam | samtools sort -o calpoly002.sorted.bam
+samtools view -Su calpoly003.sam | samtools sort -o calpoly003.sorted.bam
+samtools view -Su calpoly004.sam | samtools sort -o calpoly004.sorted.bam
+samtools view -Su calpoly005.sam | samtools sort -o calpoly005.sorted.bam
+samtools view -Su calpoly006.sam | samtools sort -o calpoly006.sorted.bam
+samtools view -Su calpoly007.sam | samtools sort -o calpoly007.sorted.bam
+samtools view -Su calpoly008.sam | samtools sort -o calpoly008.sorted.bam
+samtools view -Su calpoly009.sam | samtools sort -o calpoly009.sorted.bam
+samtools view -Su calpoly010.sam | samtools sort -o calpoly010.sorted.bam
+samtools view -Su calpoly011.sam | samtools sort -o calpoly011.sorted.bam
+samtools view -Su calpoly012.sam | samtools sort -o calpoly012.sorted.bam
+samtools view -Su calpoly013.sam | samtools sort -o calpoly013.sorted.bam
+samtools view -Su calpoly014.sam | samtools sort -o calpoly014.sorted.bam
+samtools view -Su calpoly015.sam | samtools sort -o calpoly015.sorted.bam
+samtools view -Su calpoly016.sam | samtools sort -o calpoly016.sorted.bam
+samtools view -Su calpoly017.sam | samtools sort -o calpoly017.sorted.bam
+samtools view -Su calpoly018.sam | samtools sort -o calpoly018.sorted.bam
+samtools view -Su calpoly019.sam | samtools sort -o calpoly019.sorted.bam
+samtools view -Su calpoly020.sam | samtools sort -o calpoly020.sorted.bam
+samtools view -Su calpoly021.sam | samtools sort -o calpoly021.sorted.bam
+samtools view -Su calpoly022.sam | samtools sort -o calpoly022.sorted.bam
+samtools view -Su calpoly023.sam | samtools sort -o calpoly023.sorted.bam
+samtools view -Su calpoly024.sam | samtools sort -o calpoly024.sorted.bam
+samtools view -Su calpoly025.sam | samtools sort -o calpoly025.sorted.bam
+samtools view -Su calpoly026.sam | samtools sort -o calpoly026.sorted.bam
+samtools view -Su calpoly027.sam | samtools sort -o calpoly027.sorted.bam
+samtools view -Su calpoly028.sam | samtools sort -o calpoly028.sorted.bam
+samtools view -Su calpoly029.sam | samtools sort -o calpoly029.sorted.bam
+samtools view -Su calpoly030.sam | samtools sort -o calpoly030.sorted.bam
+samtools view -Su calpoly031.sam | samtools sort -o calpoly031.sorted.bam
+samtools view -Su calpoly032.sam | samtools sort -o calpoly032.sorted.bam
+samtools view -Su calpoly033.sam | samtools sort -o calpoly033.sorted.bam
+samtools view -Su calpoly034.sam | samtools sort -o calpoly034.sorted.bam
+samtools view -Su calpoly035.sam | samtools sort -o calpoly035.sorted.bam
+samtools view -Su calpoly036.sam | samtools sort -o calpoly036.sorted.bam
+samtools view -Su calpoly037.sam | samtools sort -o calpoly037.sorted.bam
+samtools view -Su calpoly038.sam | samtools sort -o calpoly038.sorted.bam
+samtools view -Su calpoly039.sam | samtools sort -o calpoly039.sorted.bam
+samtools view -Su calpoly040.sam | samtools sort -o calpoly040.sorted.bam
+samtools view -Su calpoly041.sam | samtools sort -o calpoly041.sorted.bam
+samtools view -Su calpoly042.sam | samtools sort -o calpoly042.sorted.bam
+samtools view -Su calpoly043.sam | samtools sort -o calpoly043.sorted.bam
+samtools view -Su calpoly044.sam | samtools sort -o calpoly044.sorted.bam
+samtools view -Su calpoly045.sam | samtools sort -o calpoly045.sorted.bam
+samtools view -Su calpoly046.sam | samtools sort -o calpoly046.sorted.bam
+samtools view -Su calpoly047.sam | samtools sort -o calpoly047.sorted.bam
+samtools view -Su calpoly048.sam | samtools sort -o calpoly048.sorted.bam
+samtools view -Su calpoly049.sam | samtools sort -o calpoly049.sorted.bam
+samtools view -Su calpoly050.sam | samtools sort -o calpoly050.sorted.bam
+samtools view -Su calpoly051.sam | samtools sort -o calpoly051.sorted.bam
+samtools view -Su calpoly052.sam | samtools sort -o calpoly052.sorted.bam

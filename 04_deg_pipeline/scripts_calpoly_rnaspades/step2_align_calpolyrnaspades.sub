@@ -1,0 +1,434 @@
+#!/bin/bash
+
+#SBATCH --job-name=2_calpoly_bowtie2
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 20
+#SBATCH -t 14-00:00:00
+#SBATCH --exclusive
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+
+cd $SLURM_SUBMIT_DIR # set this if not using sed in Makefile
+module load biocontainers
+module load bowtie2/2.4.2-py38
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly001.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s001_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s001_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly002.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s002_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s002_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly003.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s003_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s003_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly004.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s004_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s004_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly005.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s005_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s005_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly006.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s006_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s006_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly007.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s007_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s007_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly008.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s008_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s008_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly009.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s009_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s009_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly010.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s010_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s010_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly011.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s011_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s011_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly012.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s012_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s012_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly013.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s013_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s013_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly014.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s014_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s014_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly015.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s015_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s015_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly016.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s016_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s016_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly017.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s017_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s017_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly018.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s018_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s018_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly019.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s019_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s019_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly020.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s020_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s020_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly021.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s021_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s021_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly022.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s022_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s022_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly023.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s023_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s023_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly024.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s024_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s024_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly025.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s025_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s025_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly026.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s026_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s026_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly027.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s027_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s027_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly028.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s028_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s028_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly029.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s029_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s029_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly030.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s030_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s030_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly031.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s031_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s031_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly032.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s032_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s032_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly033.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s033_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s033_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly034.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s034_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s034_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly035.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s035_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s035_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly036.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s036_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s036_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly037.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s037_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s037_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly038.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s038_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s038_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly039.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s039_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s039_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly040.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s040_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s040_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly041.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s041_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s041_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly042.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s042_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s042_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly043.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s043_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s043_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly044.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s044_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s044_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly045.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s045_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s045_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly046.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s046_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s046_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly047.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s047_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s047_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly048.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s048_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s048_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly049.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s049_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s049_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly050.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s050_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s050_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly051.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s051_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s051_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly052.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s052_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s052_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly053.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s053_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s053_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly054.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s054_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s054_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly055.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s055_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s055_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly056.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s056_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s056_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly057.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s057_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s057_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly058.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s058_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s058_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly059.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s059_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s059_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly060.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s060_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s060_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly061.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s061_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s061_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly062.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s062_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s062_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly063.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s063_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s063_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly064.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s064_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s064_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly065.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s065_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s065_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly066.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s066_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s066_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly067.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s067_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s067_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly068.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s068_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s068_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly069.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s069_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s069_2.fq.gz \
+
+bowtie2 --time --threads 20 --very-sensitive \
+ -S /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades/calpoly070.sam \
+ -x /scratch/bell/lee3617/kw/3_deg_pipeline/index/bowtie2_index/calpoly_rnaspades_index \
+ -1 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s070_1.fq.gz \
+ -2 /scratch/bell/lee3617/kw/3_deg_pipeline/reads/s070_2.fq.gz \
+
