@@ -1,0 +1,11 @@
+## Bash commands to get GO terms and their associated p-values from an enrichr output table for revigo 
+
+# THIS WORKS! WOOT
+
+cut -f 1,4 GO_Molecular_Function_2021_table.txt | grep -E -o 'GO:[0-9]*|[0-9]\.[0-9E\-]*' | paste -d ' ' - -  > GO_molecular_2000termswithpvalue.txt
+
+cut -f 1,4 GO_Cellular_Component_2021_table.txt | grep -E -o 'GO:[0-9]*|[0-9]\.[0-9E\-]*' | paste -d ' ' - -  > GO_cellular_2000termswithpvalue.txt
+
+# Different strategy for Bio to deal with multiple paratheses  
+
+cut -f 1,4 GO_Biological_Process_2021_table.txt | sed 's/^.*\(GO:[0-9]*.*[0-9]\.[0-9E\-]*\).*$/\1/' | sed 's/)//' | head -2001 > GO_biological_2000termswithpvalue.txt

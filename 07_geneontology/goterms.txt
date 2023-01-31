@@ -1,0 +1,18 @@
+term	definition
+GO:0007283	spermatogenesis 
+GO:0007165	signal transduction 
+GO:0007018	microtubule-based movement 
+GO:0060271	cilium assembly 
+GO:0045893	positive regulation of DNA-templated transcription 
+GO:0006357	regulation of transcription by RNA polymerase II 
+GO:0045944	positive regulation of transcription by RNA polymerase II 
+GO:0030317	flagellated sperm motility 
+GO:0003341	cilium movement 
+GO:0015031	protein transport 
+GO:0015074	DNA integration 
+GO:0030154	cell differentiation 
+GO:0006915	apoptotic process 
+GO:0002181	cytoplasmic translation 
+GO:0006468	protein phosphorylation 
+GO:0006412	translation 
+GO:0006508	proteolysis
