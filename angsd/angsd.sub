@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH --job-name=angsd_neutral
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 64
+#SBATCH -t 4-00:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+#SBATCH --output slurm-%x-%J.out
+
+cd $SLURM_SUBMIT_DIR
+module purge
+
+module load biocontainers
+module load vcftools
+
+LIST=bamlist.txt # line-delimited list of paths to your bamfiles
+minInd=70  # minimum number of individuals a locus must be sequenced in to be genotyped
+minGeneCountAcross=100
+minGeneCountWithin=20
+
+REF=/scratch/bell/lee3617/kellets_whelks_rnaseq/05_gatk/reference/rnaspades_annotated_swissprot_nr.fasta.fai
+
+# example from will 
+# /depot/christ99/share_data/Will/bin/angsd -bam ${list} -GL 1 -out neutral -doMaf 2 -doMajorMinor 1 -SNP_pval 0.00000001 -doGeno 4 -doPost 2 -postCutoff 0.95 -minQ 20 -minMapQ 20 -minInd $minInd
+
+
+# calculate genotype likelihood 
+# -GL 2 is gatk, -GL 1 is samtools genotype liliehood model 
+/depot/christ99/share_data/Will/bin/angsd -bam ${LIST} -GL 2 -doGeno 4 -doPost 2 -out neutral_filt -doMajorMinor 1 -postCutoff 0.95 -minQ 20 -minMapQ 1 -minInd $minInd -doGlf 1 -fai $REF
+
+# call genotypes 
+/depot/christ99/share_data/Will/bin/angsd -glf neutral_filt.glf.gz -fai $REF -nInd 70 -out neutral_filt -doMajorMinor 1 -doGeno 4 -doPost 2 -doMaf 1 -doCounts -setMinDepth $minGeneCountAcross -geno_minDepth $minGeneCountWithin 
