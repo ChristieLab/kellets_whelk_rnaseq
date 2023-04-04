@@ -412,8 +412,6 @@ unique(OUT$module)
 refGenes2Go <- read.table("/Users/andy/KW/07_geneontology/eggnog_results/all_ref_genes_to_go.txt") 
 refGenes2Go$V1 <- substr(refGenes2Go$V1, 1, nchar(refGenes2Go$V1)-2)
 
-
-
 OUT$genename %in% refGenes2Go$V1 # not all genes ID'd by WGCNA have GO's associated with them. Some of them are not even included in the eggNOG output 
 
 
@@ -421,17 +419,22 @@ WGCNA_result_with_GO <- OUT %>% left_join(refGenes2Go, by = join_by(genename == 
 colnames(WGCNA_result_with_GO)[10] <- "ID"
 WGCNA_keep_GO <- filter(WGCNA_result_with_GO, ID != "NA" & ID != "-")
   
-  
 thistle <- WGCNA_keep_GO[WGCNA_keep_GO$module=="thistle", ]
 thistle.go <- strsplit(thistle$ID, split = ",")
 thistle.go <- unlist(thistle.go)
 thistle.go.count <- as.data.frame(table(thistle.go))
-thistle.go.terms <-- 
 
+red <- WGCNA_keep_GO[WGCNA_keep_GO$module=="red", ]
+red.go <- strsplit(red$ID, split = ",")
+red.go <- unlist(red.go)
+red.go.count <- as.data.frame(table(red.go))
 
 goterms <- Term(GOTERM)
-
-
+goterms1 <- strsplit(goterms, split = "\t")
+goterms2 <- as.data.frame(as.matrix(goterms1))
+goterms2$ID <- rownames(goterms2)
+thistle.go.count2 <- thistle.go.count %>% left_join(goterms2, by = join_by(thistle.go == ID))
+colnames(thistle.go.count2) <- c("ID", "Freq", "Term")
 
 red     <- WGCNA_result_with_GO[WGCNA_result_with_GO$module=="red", ]
 
