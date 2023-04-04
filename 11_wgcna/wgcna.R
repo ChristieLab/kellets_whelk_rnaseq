@@ -430,17 +430,15 @@ red.go <- unlist(red.go)
 red.go.count <- as.data.frame(table(red.go))
 
 goterms <- Term(GOTERM)
-goterms1 <- strsplit(goterms, split = "\t")
-goterms2 <- as.data.frame(as.matrix(goterms1))
-goterms2$ID <- rownames(goterms2)
-thistle.go.count2 <- thistle.go.count %>% left_join(goterms2, by = join_by(thistle.go == ID))
-colnames(thistle.go.count2) <- c("ID", "Freq", "Term")
+goterms <- strsplit(goterms, split = "\t")
+goterms <- as.data.frame(as.matrix(goterms))
+goterms$ID <- rownames(goterms)
 
-red     <- WGCNA_result_with_GO[WGCNA_result_with_GO$module=="red", ]
+thistle.go.count <- thistle.go.count %>% left_join(goterms, by = join_by(thistle.go == ID))
+colnames(thistle.go.count) <- c("ID", "Freq", "Term")
 
+red.go.count <- red.go.count %>% left_join(goterms, by = join_by(red.go == ID))
+colnames(red.go.count) <- c("ID", "Freq", "Term")
 
-
-
-red.go <- red$ID
-
-
+thistle.go.count
+red.go.count
