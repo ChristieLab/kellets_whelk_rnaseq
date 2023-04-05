@@ -435,10 +435,14 @@ goterms <- as.data.frame(as.matrix(goterms))
 goterms$ID <- rownames(goterms)
 
 thistle.go.count <- thistle.go.count %>% left_join(goterms, by = join_by(thistle.go == ID))
-colnames(thistle.go.count) <- c("ID", "Freq", "Term")
+thistle.go.count <- thistle.go.count[,c(1,3,2)]
+colnames(thistle.go.count) <- c("ID", "Term", "Freq")
+thistle.go.count <- apply(thistle.go.count, 2, as.character)
 
 red.go.count <- red.go.count %>% left_join(goterms, by = join_by(red.go == ID))
-colnames(red.go.count) <- c("ID", "Freq", "Term")
+red.go.count <- red.go.count[,c(1,3,2)]
+colnames(red.go.count) <- c("ID", "Term", "Freq")
+red.go.count <- apply(red.go.count, 2, as.character)
 
-thistle.go.count
-red.go.count
+write.csv(thistle.go.count, "thistle_unique_GO_terms.csv")
+write.csv(red.go.count, "red_unique_GO_terms.csv")
