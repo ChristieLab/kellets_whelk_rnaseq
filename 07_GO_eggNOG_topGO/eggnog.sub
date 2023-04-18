@@ -12,6 +12,10 @@ module purge
 module load biocontainers
 module load eggnog-mapper/2.1.7
 
-emapper.py -m diamond --cpu 16 -i ./rnaspades_assembly_calpoly_singleline.fasta --itype genome --output rnaspades_eggnog_annot -m diamond
 
 ### script to annotate the entire transcriptome 
+emapper.py -m diamond --cpu 16 -i ./rnaspades_assembly_calpoly_singleline.fasta --itype genome --output rnaspades_eggnog_annot -m diamond
+
+
+### script to annotate the degs
+emapper.py -m diamond --cpu 16 -i ../rnaspades_degs_transcriptome.fasta --itype genome --output eggnot_annot -m diamond
