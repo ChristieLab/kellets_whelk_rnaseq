@@ -9,70 +9,97 @@
 # required packages may not be compatible with R v4.
 #===========================================================================#
 
+
+### some notes about working with GO.db 
+### https://biology.stackexchange.com/questions/44887/get-parent-go-terms-of-go-term-vector
+
+
 ##### AMH 4/14/23: this still works for me; I'm running R v4.0.3 #####
 
 library(GO.db)
 library(metacoder)
 library(org.Hs.eg.db)
 library(AnnotationDbi)
-library(GOfuncR)
+library(dplyr)
 
 # set module of interest
-module <- "thistle" # darkred
-
 setwd("/Users/andy/KW/11_wgcna/")
-
-##### READ IN ALL MODULE GENE:GO INFORMATION #####
-## get list of all GO IDs and corresponding terms
-terms <- Term(GOTERM)
-terms <- as.data.frame(terms)
-terms <- cbind(rownames(terms), terms)
-rownames(terms) <- c()
-colnames(terms) <- c("go.id","term")
-
-# ## get list of gene:GO term relationships
-# ##
-# ## gene.name       go.id
-# ##
-# rep.mods <- read.csv("/Users/Avril/Documents/rna_seq/seq_data_processing_notes_and_analyses/wgcna/go_for_janna/rep4_module_gene_go_info.csv")
-# ## keep info for module of interest
-# rep.mods <- rep.mods[which(rep.mods$module==module),]
-# rep.mods$go.id <- as.character(rep.mods$go.id)
-# rep.mods <- rep.mods[,c(2,4)]
-
+module <- "red"  #"thistle" 
 
 ##### GET GO TERMS UNIQUE TO MODULE OF INTEREST #####
 ##
 ## ID       term       count
 ##
+
 uni.terms <- read.csv(paste0(module,"_unique_GO_terms.csv"))
 
-
 ##### GET LIST OF INTERESTING GO TERMS (filt.go) THAT ARE ALSO UNIQUE TO MODULE #####
+
+
+terms <- AnnotationDbi::select(GO.db, uni.terms$ID, columns = c('TERM','ONTOLOGY'), keytype = "GOID") 
+bp.terms <- terms[terms$ONTOLOGY=="BP", ] # grab only BP terms 
+bp.terms <- bp.terms[!is.na(bp.terms), ]
+bp.terms$GOID
+
 n <- 30 ## can limit the # of GO terms you want to include, just to see how it runs
-final.go <- head(uni.terms, n=n)
+final.go <- head(bp.terms, n=n)
+
 # final.go <- uni.terms[which(uni.terms$ID %in% filt.go),]
 # rm(list=ls()[! ls() %in% c("final.go","module")])
 
 ##### PASS FINAL GO LIST TO METACODER TO PLOT TREES #####
-setwd("~/Desktop/")
+# setwd("~/Desktop/")
 
 bpdata <- as.data.frame(final.go$ID)
-colnames(bpdata) = c("GO.ID")
-bpdata$GO.ID <- as.character(bpdata$GO.ID)
 
 # function needed to parse GO IDs
-##### AL 4/1/7/23: the function does not work, writing a new one. 
-##### below are test codes 
-##### need to get only biological processes? 
+##### AL 4/17/23: the function does not work, writing a new one. 
 
+#function needed to parse GO IDs
 
-get_parent_nodes("GO:0000315")
+gobpparents <- as.list(GOBPPARENTS)
+gobpparents <- gobpparents[!is.na(gobpparents)] # Remove GO IDs that do not have any parent
+
+get_bpparents = function(x, current=x, all_paths = FALSE, verbose = TRUE, valid_relationships = c("isa")) {
+  # Get immediate children of current taxon
+  parents = tryCatch({
+    possible_parents <- as.list(gobpparents[x[1]])[[1]] #this line doesn't function?
+    if (! is.null(valid_relationships)) {
+      possible_parents <- possible_parents[names(possible_parents) %in% valid_relationships]
+    }
+    names(AnnotationDbi::Term(possible_parents))
+  }, error = function(e) {
+    c()
+  })
+    # only go down one path if desired
+  if (! all_paths) {
+    parents <- parents[1]
+  }
+  parents <- parents[parents != "all"]
+  if (is.null(parents)) {
+    return(c())
+  } else if (length(parents) == 0) {
+    cat(length(x))
+    return(paste0(collapse = ";", AnnotationDbi::Term(x)))
+  } else {
+    next_x <- lapply(parents, function(y) c(y, x))
+    
+    # Run this function on them to get their output
+    child_output <- lapply(next_x, get_bpparents, all_paths = all_paths)
+    output <- unlist(child_output, recursive = FALSE)
+    
+    return(output)
+  }
+}
+
 
 ##### 4/17/2023 AL: Code below works fine
 
 # modify, pull go term relationships
-bpterms = lapply(bpdata$GO.ID, term_class, all_paths = FALSE, type = GOBPPARENTS) #this line can take forever
+
+#bpterms = lapply(bp.terms$GOID, get_bpparents, all_paths = FALSE) #this line can take forever
+
+bpterms = lapply(bp.terms$GOID, get_bpparents, all_paths = FALSE)
 bpres   = data.frame(class=unlist(bpterms))
 
 # write/write data (annoyingly the only way I can get it to work, but at least it works)
@@ -85,19 +112,17 @@ bpres=read.table("data/temp.csv", header=TRUE, sep=",")
 
 ##### AL 4/17/23: The following code works with metacoder 0.3.6
 
-
-
 ## bpdata contains the GO IDs for the terminal nodes
 ## bpres and bpdata contain the same information, different formats = path information for each terminal node (GO Terms)
 
 #parse GO data
 ##### bpres=read.table("temp.csv", header=TRUE, sep=",") # test with Avril's file 
 
-bpres2 <- data.frame(lapply(bpres, function(x) {
-  gsub("\\|", ";", x)
-})) # change format for parse_tax_data()
+# bpres2 <- data.frame(lapply(bpres, function(x) {
+#   gsub("\\|", ";", x)
+# })) # change format for parse_tax_data()
 
-testdata <- parse_tax_data(bpres2, class_sep = ";")
+testdata <- parse_tax_data(bpres, class_sep = ";")
 
 # data = separate(bpres, c("class" = -1) , c("1","2","3","4","5","6","7","8","9","10","11") , sep = '\\|')
 
@@ -109,14 +134,14 @@ testdata <- parse_tax_data(bpres2, class_sep = ";")
 
 
 #create figure
-tempdata = filter_taxa(testdata, n_supertaxa <= 500) #filters terms that are WAAAAY out from the middle
+tempdata = filter_taxa(testdata, n_supertaxa <= 5) #filters terms that are WAAAAY out from the middle
 ## n_supertaxa sets # of nodes that can be in a single path from center to terminal nodes (cuts from terminal end, not internal nodes)
 ##### AMH 4/14/23: had to update lazyeval package here #####
 
 pdf(paste("",module,"meta_labels.pdf", sep=""), width=5, height=5, useDingbats=FALSE, onefile=FALSE)
 #grey70      grey40      dodgerblue2 tomato2  chartreuse3  darkorchid2 yellow3 orange2 magenta1
 par(bg=NA)
-set.seed(100) ## seeds: orange = 35       lightsteelblue1 = 75       paleturquoise = 100
+set.seed(35) ## seeds: darkred = 35    thistle = 100
 heat_tree(tempdata, 
           node_label = taxon_names, ### modified by AL 
           # node_size = colsandsize$ngenes,
