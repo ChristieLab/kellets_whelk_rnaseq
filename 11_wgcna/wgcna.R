@@ -1,10 +1,9 @@
 ### Weighted gene co-expression network analysis (WGCNA) for RNA-seq data ###
-
-
 ### written by Andy Lee
 ### modified from Avril Harder and Mark Christie 
 ### Largely based on WGCNA tutorials at: 
 ### https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/Tutorials/ 
+### Uses the topGO package to find enriched terms within singificant modules 
 
 setwd("~/KW/11_wgcna")
 #BiocManager::install("WGCNA")
@@ -14,6 +13,7 @@ setwd("~/KW/11_wgcna")
 library("DESeq2")
 library("WGCNA")
 library("dplyr")
+library("topGO")
 library(GO.db)
 
 ##### DATA LOADING AND PREP #####
@@ -403,46 +403,117 @@ write.csv(OUT, "wgcna_output.csv")
 
 #OUT <- readRDS("wgcna_output.rds")
 unique(OUT$module)
+OUT <- readRDS("wgcna_output.rds")
 
 
+###### run enrichment test to identify which GO terms are enriched within each significant module compared to transcriptome-wide GO terms 
+## Avril and Janna presented top 20 in their paper 
+## used elim01 alogorithm becuase "efficiently identifies enriched terms at all levels of the GO hierarchy while limiting the proportion of false positives (Alexa, Rahnenfuhrer, & Lengauer, 2006)" 
+## Should create a for_loop to that runs through all significant modules in the future 
 
 
-
-###### match genename with GO Terms from eggNOG
+# ============== 
 refGenes2Go <- read.table("/Users/andy/KW/07_geneontology/eggnog_results/all_ref_genes_to_go.txt") 
 refGenes2Go$V1 <- substr(refGenes2Go$V1, 1, nchar(refGenes2Go$V1)-2)
+ref.geneNames <- refGenes2Go$V1
 
-OUT$genename %in% refGenes2Go$V1 # not all genes ID'd by WGCNA have GO's associated with them. Some of them are not even included in the eggNOG output 
+# Get genes from the 2 significant modules 
+thistle <- OUT[OUT$module=="thistle", ]
+red <- OUT[OUT$module=="red", ]
+
+# Find which terms are enriched ("significant") within each module in topGO 
+thistle.InterestingGenes <- thistle$genename
+thistle.geneList <- factor(as.integer(ref.geneNames %in% thistle.InterestingGenes))
+names(thistle.geneList) <- geneNames
+
+thistle.GOdata <- new("topGOdata", 
+              description = "thistle module to ref",
+              ontology = "BP",
+              allGenes = thistle.geneList, 
+              annot = annFUN.gene2GO, 
+              gene2GO = geneID2GO)
+numSigGenes(thistle.GOdata) 
+thistle.resultweight01 <- runTest(thistle.GOdata, algorithm = "weight01", statistic = "fisher")
+thistle.Res <- GenTable(thistle.GOdata, thistle.resultweight01, topNodes = 20)
+
+red.InterestingGenes <- red$genename
+red.geneList <- factor(as.integer(ref.geneNames %in% red.InterestingGenes))
+names(red.geneList) <- geneNames
+red.GOdata <- new("topGOdata", 
+                      description = "red module to ref",
+                      ontology = "BP",
+                      allGenes = red.geneList, 
+                      annot = annFUN.gene2GO, 
+                      gene2GO = geneID2GO)
+numSigGenes(red.GOdata) 
+red.resultweight01 <- runTest(red.GOdata, algorithm = "weight01", statistic = "fisher")
+red.Res <- GenTable(red.GOdata, red.resultweight01, topNodes = 20)
 
 
-WGCNA_result_with_GO <- OUT %>% left_join(refGenes2Go, by = join_by(genename == V1), relationship = "many-to-many")
-colnames(WGCNA_result_with_GO)[10] <- "ID"
-WGCNA_keep_GO <- filter(WGCNA_result_with_GO, ID != "NA" & ID != "-")
-  
-thistle <- WGCNA_keep_GO[WGCNA_keep_GO$module=="thistle", ]
-thistle.go <- strsplit(thistle$ID, split = ",")
+###### Get top 20 genes in each significant module, ranked by gene significance, to plot in metacoder 
+
+
+
+
+
+### not all genes ID'd by WGCNA have GO's associated with them. Some of them are not even included in the eggNOG output
+OUT$genename %in% refGenes2Go$V1 
+
+### Make sure all the genes to plot in metacoder has GOs 
+OUT_with_GO <- OUT %>% left_join(refGenes2Go, by = join_by(genename == V1), relationship = "many-to-many")
+colnames(OUT_with_GO)[10] <- "ID"
+OUT_with_GO <- filter(OUT_with_GO, ID != "NA" & ID != "-")
+
+thistle.sig20 <- OUT_with_GO[OUT_with_GO$module=="thistle", ]
+thistle.sig20 <- head(thistle.sig20[order(-thistle$gene.trait.significance),], n=20)
+
+thistle.go <- strsplit(thistle.sig20$ID, split = ",")
 thistle.go <- unlist(thistle.go)
 thistle.go.count <- as.data.frame(table(thistle.go))
-
-red <- WGCNA_keep_GO[WGCNA_keep_GO$module=="red", ]
-red.go <- strsplit(red$ID, split = ",")
-red.go <- unlist(red.go)
-red.go.count <- as.data.frame(table(red.go))
 
 goterms <- Term(GOTERM)
 goterms <- strsplit(goterms, split = "\t")
 goterms <- as.data.frame(as.matrix(goterms))
 goterms$ID <- rownames(goterms)
 
-thistle.go.count <- thistle.go.count %>% left_join(goterms, by = join_by(thistle.go == ID))
-thistle.go.count <- thistle.go.count[,c(1,3,2)]
-colnames(thistle.go.count) <- c("ID", "Term", "Freq")
-thistle.go.count <- apply(thistle.go.count, 2, as.character)
+thistle.go.count1 <- thistle.go.count %>% left_join(goterms, by = join_by(thistle.go == ID))
+thistle.go.count2 <- thistle.go.count1[,c(1,3,2)]
+colnames(thistle.go.count2) <- c("ID", "term", "count")
+thistle.go.count3 <- apply(thistle.go.count2, 2, as.character)
+write.csv(thistle.go.count3, "thistle_unique_GO_terms.csv", row.names = FALSE)
 
-red.go.count <- red.go.count %>% left_join(goterms, by = join_by(red.go == ID))
-red.go.count <- red.go.count[,c(1,3,2)]
-colnames(red.go.count) <- c("ID", "Term", "Freq")
-red.go.count <- apply(red.go.count, 2, as.character)
 
-write.csv(thistle.go.count, "thistle_unique_GO_terms.csv")
-write.csv(red.go.count, "red_unique_GO_terms.csv")
+#red.sig20     <- OUT_with_GO[OUT_with_GO$module=="red", ]
+#red.sig20     <- head(red.sig20[order(-red$gene.trait.significance),], n=20)
+
+###### match genename with GO Terms from eggNOG
+######
+
+
+
+
+red <- WGCNA_keep_GO[WGCNA_keep_GO$module=="red", ]
+red.go <- strsplit(red$ID, split = ",")
+red.go <- unlist(red.go)
+red.go.count <- as.data.frame(table(red.go))
+
+
+###### Export a table with all significant GO terms
+goterms <- Term(GOTERM)
+goterms <- strsplit(goterms, split = "\t")
+goterms <- as.data.frame(as.matrix(goterms))
+goterms$ID <- rownames(goterms)
+
+thistle.go.count1 <- thistle.go.count %>% left_join(goterms, by = join_by(thistle.go == ID))
+thistle.go.count2 <- thistle.go.count1[,c(1,3,2)]
+colnames(thistle.go.count2) <- c("ID", "term", "count")
+thistle.go.count3 <- apply(thistle.go.count2, 2, as.character)
+
+red.go.count1 <- red.go.count %>% left_join(goterms, by = join_by(red.go == ID))
+red.go.count2 <- red.go.count1[,c(1,3,2)]
+colnames(red.go.count2) <- c("ID", "term", "count")
+red.go.count3 <- apply(red.go.count2, 2, as.character)
+
+
+write.csv(thistle.go.count3, "thistle_unique_GO_terms.csv", row.names = FALSE)
+write.csv(red.go.count3, "red_unique_GO_terms.csv", row.names = FALSE)
