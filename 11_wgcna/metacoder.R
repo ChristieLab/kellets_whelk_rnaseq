@@ -24,7 +24,7 @@ library(dplyr)
 
 # set module of interest
 setwd("/Users/andy/KW/11_wgcna/")
-module <- "red"  #"thistle" 
+module <- "thistle"#"red"  
 
 ##### GET GO TERMS UNIQUE TO MODULE OF INTEREST #####
 ##
@@ -142,7 +142,7 @@ pdf(paste("",module,"meta_labels.pdf", sep=""), width=5, height=5, useDingbats=F
 #grey70      grey40      dodgerblue2 tomato2  chartreuse3  darkorchid2 yellow3 orange2 magenta1
 par(bg=NA)
 set.seed(35) ## seeds: darkred = 35    thistle = 100
-heat_tree(tempdata, 
+heat_tree(testdata, 
           node_label = taxon_names, ### modified by AL 
           # node_size = colsandsize$ngenes,
           # node_size_trans = "log10",
@@ -193,4 +193,5 @@ dev.off()
 #           layout = "da", initial_layout = "re"
 # )
 # dev.off()
+
 
