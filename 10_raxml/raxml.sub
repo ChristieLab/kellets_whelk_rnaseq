@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=raxml
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 5
+#SBATCH -t 14-00:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+#SBATCH --output slurm-%x-%J.out
+
+module purge
+module load biocontainers
+module load raxml/8.2.12
+
+# raxmlHPC -m GTRGAMMA -p 12345 -s all_monnap_maf05.fasta -N 1000 -n kw_all.tre -T 5 -f a -x 12345e
+# raxmlHPC -m GTRGAMMA -p 12345 -s all_noscross_maf05.fasta -N 1000 -n all_nocross.tre -T 5 -f a -x 12345e
+# raxmlHPC -m GTRGAMMA -p 12345 -s deg_monnap_maf05.fasta -# 1000 -n deg_monnap.tre  -T 5 -f a -x 12345e
+raxmlHPC -m GTRGAMMA -p 12345 -s deg_nocross_maf05.fasta -# 1000 -n deg_nocross.tre  -T 5 -f a -x 12345e
+
+
+# -m Model of nucleotide subsitiution, here GTR + optimization of subistitution reate + GAMMA model of rate heterogeneity 
+# -p random number seed for the parsimony inference. Here, 12345
+# -s specify name of the aliment data file (phylip or fasta)
+# -# specify the number of alternative runs on distinct starting trees 
+# -n name of output file 
