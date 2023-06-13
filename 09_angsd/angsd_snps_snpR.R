@@ -1,106 +1,422 @@
-# script written by andy lee on 02/15/2023; contact at andymuanlee@gmail.com
-# Rversion:
-# Neutral SNPs 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###
+### analyzing Kellet's whelks RNA-Seq SNPs  ###
+### written by Andy Lee April 2023, contact at andymuanlee@gmail.com, all rights reserved 
+### 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###
+
+# load packages and set working diretory 
 library("snpR")
 library("ggplot2")
 library("ggtree")
 library("fastreeR")
+library(tidyverse)
+library(gridExtra)
+library(dplyr)
+library(adegenet)
+library(pegas)
+library("poppr")
+library("ape") 
 
 setwd("~/KW/09_angsd/")
 
-sample_meta <- read.csv("~/KW/09_angsd//neutral/sample_info.csv")
+### load raw vcf files 
+sample_meta <- read.csv("~/KW/09_angsd/neutral/sample_info.csv")
+deg_vcf <- import.snpR.data("~/KW/09_angsd/vcfs/kw_deg.vcf", sample.meta = sample_meta)
+all_vcf <- import.snpR.data("~/KW/09_angsd/vcfs/kw_neutral.vcf", sample.meta = sample_meta)
 
-deg_vcf <- import.snpR.data("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/05_angsd/degs/scripts/kw_deg.vcf", sample.meta = sample_meta)
-all_vcf <- import.snpR.data("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/05_angsd/neutral_all/kw_neutral.vcf", sample.meta = sample_meta)
-
-# nodeg_vcf <-import.snpR.data("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes/Bell Scratch/kellets_whelks_rnaseq/a05_angsd/neutral_nodegs/scripts/kw_nodeg.vcf", sample.meta = sample_meta)
-
-#### filter SNPs 
-deg_dat <- filter_snps(deg_vcf, maf = 0.05)
-all_dat <- filter_snps(all_vcf, maf = 0.05)
-
-
-
-# nodeg_dat <- filter_snps(neutral_nodeg_vcf, maf = 0.05, min_loci=0.8)
-
-#### export filtered SNP vcf 
-#format_snps(deg_dat, output="vcf", chr="CHROM", outfile="kw_deg_filt_maf05.vcf")
-#format_snps(all_dat, output="vcf", chr="CHROM", outfile="kw_all_filt_maf05.vcf")
-
-## calculate statistics 
-deg_dat <- calc_pairwise_fst(deg_dat, facets="site")
-deg_dat <- calc_het_hom_ratio(deg_dat, facets="site")
-deg_dat <- calc_fis(deg_dat)
-deg_dat <- calc_ho(deg_dat)
-deg_dat <- calc_he(deg_dat)
-
-all_dat <- calc_pairwise_fst(all_dat, facets="site")
-all_dat <- calc_het_hom_ratio(all_dat, facets="site")
-all_dat <- calc_fis(all_dat)
-all_dat <- calc_ho(all_dat)
-all_dat <- calc_he(all_dat)
-
-# nodeg_dat <- calc_pairwise_fst(nodeg_dat, facets="site")
-# nodeg_dat <- calc_het_hom_ratio(nodeg_dat, facets="site")
-# nodeg_dat <- calc_fis(nodeg_dat)
-# nodeg_dat <- calc_ho(nodeg_dat)
-# nodeg_dat <- calc_he(nodeg_dat)
-
-##### view statistics 
-
-## pairwise FST values 
-get.snpR.stats(deg_dat, "site", "fst")
-get.snpR.stats(all_dat, "site", "fst")
-# get.snpR.stats(nodeg_dat, "site", "fst")
+### filter by maf within each site 
+all_filt <- filter_snps(all_vcf, maf = 0.05, maf_facets = "site") 
+snp.meta(all_filt)$ID <- paste0(snp.meta(all_filt)$CHROM, "_",snp.meta(all_filt)$position)
+deg_filt <- filter_snps(deg_vcf, maf = 0.05, maf_facets = "site")
+snp.meta(deg_filt)$ID <- paste0(snp.meta(deg_filt)$CHROM, "_",snp.meta(deg_filt)$position)
 
 
-get.snpR.stats(deg_dat, "site", stats="het_hom_ratio",)
-get.snpR.stats(deg_dat, stats="fis")
-get.snpR.stats(deg_dat, stats="ho")
-get.snpR.stats(deg_dat, stats="he")
+####format different populations============
+## without maternal cross 
+deg_nocross <- filter_snps(deg_vcf[site=-"NAPxMON"], maf = 0.05, maf_facets = "site")
+snp.meta(deg_nocross)$ID <- paste0(snp.meta(deg_nocross)$CHROM, "_",snp.meta(deg_nocross)$position)
+all_nocross <- filter_snps(all_vcf[site=-"NAPxMON"], maf = 0.05, maf_facets = "site")
+snp.meta(all_nocross)$ID <- paste0(snp.meta(all_nocross)$CHROM, "_",snp.meta(all_nocross)$position)
+
+## MON and NAP only 
+deg_monnap <- filter_snps(deg_vcf[site=-c("NAPxMON","POL")], maf = 0.05, maf_facets = "site")
+all_monnap <- filter_snps(all_vcf[site=-c("NAPxMON","POL")], maf = 0.05, maf_facets = "site")
+
+# Filter out "high" FST snps
+all_nocross <- calc_pairwise_fst(all_nocross, facets="site")
+fst <- get.snpR.stats(all_nocross, "site", "fst")
+fsts <- fst$pairwise
+
+keep <- unique(fsts$ID[which(fsts$fst <= 0.1)])
+keep <- which(snp.meta(all_nocross)$ID %in% keep)
+lowfst <- all_nocross[keep,]
+
+# Filter out high importance snps in random forest 
+rfdf <- readRDS("rfdf.rds")
+unique(rfdf$snp_pos[which(rfdf$Importance <= 0)])
+keep <- unique(rfdf$snp_pos[which(rfdf$Importance <= 0)])
+keep <- which(snp.meta(all_nocross)$ID %in% keep)
+low_import <- all_nocross[keep,]
 
 
-get.snpR.stats(all_dat, "site", stats="het_hom_ratio",)
-get.snpR.stats(all_dat, stats="fis")
-get.snpR.stats(all_dat, stats="ho")
-get.snpR.stats(all_dat, stats="he")
-
-# get.snpR.stats(nodeg_dat, "site", stats="het_hom_ratio",)
-# get.snpR.stats(nodeg_dat, stats="fis")
-# get.snpR.stats(nodeg_dat, stats="ho")
-# get.snpR.stats(nodeg_dat, stats="he")
-
-############################################### Format different populations ##################################
-
-### without maternal cross 
-deg_nocross <- filter_snps(deg_dat[site=-"NAPxMON"], maf = 0.05)
-all_nocross <- filter_snps(all_dat[site=-"NAPxMON"], maf = 0.05)
-# nodeg_nocross <- nodeg_dat[site=-"NAPxMON"]
-
-### MON and NAP only 
-deg_monnap <- filter_snps(deg_dat[site=-c("NAPxMON","POL")], maf = 0.05)
-all_monnap <- filter_snps(all_dat[site=-c("NAPxMON","POL")], maf = 0.05)
-
-################################################ plot PCA ################################################################
-manual_col4 <- c("#FEB77EFF", "#972C80FF","#d1426fff","#000004FF")
+### PCAs ============================================================
+# set manual colors 
+# manual_col4 <- c("#FEB77EFF", "#972C80FF","#d1426fff","#000004FF")
 manual_col3 <- c("#FEB77EFF", "#972C80FF","#000004FF")
-manual_col2 <- c("#FEB77EFF", "#972C80FF")
+# manual_col2 <- c("#FEB77EFF", "#972C80FF")
+
+deg_pca <- plot_clusters(deg_nocross, facets="site", alt.palette = manual_col3)
+all_pca <- plot_clusters(all_nocross, facets="site", alt.palette = manual_col3)
+plot_clusters(lowfst, facets="site", alt.palette=manual_col3) 
+plot_clusters(low_import, facets="site", alt.palette=manual_col3) 
 
 
-plot_clusters(deg_dat, facets="site", alt.palette = manual_col4)   # GO into SI 
+p_pca_deg <- deg_pca$plots$pca + theme(legend.position = "none")
+p_pca_all <- all_pca$plots$pca + theme(legend.position = "none")
 
-deg_monnap <- deg_dat[site=-c("NAPxMON", "POL")]
-dup_deg_monnap <- deg_dat[family=c("T1E1", "T1E18", "T1E2", "T1E4", "T1E5", "T1E6", "T6E18", "T6E21", "T6E23", "T6E24", "T6E44", "T6E45")] 
+## microsat PCA ====
+## data preparation 
+usat <- read.csv("kw_usat.csv")
+num_rows <- nrow(usat) / 2  # data contains an even number of rows
+num_cols <- ncol(usat) - 1  # Subtract 1 to exclude the first column (individual names)
+microsat_data <- matrix(NA, nrow = num_rows, ncol = num_cols)
+
+i=2
+row_index <- 1
+for (i in seq(2, nrow(usat), by = 2)){
+  combined_row <- paste0(usat[i-1, -1], "/", usat[i, -1])  # Combine alleles with "/"
+  if (length(combined_row) == num_cols) {
+    microsat_data[row_index, ] <- combined_row
+    row_index <- row_index + 1
+  }
+}
+names <- usat[,1]
+names <- names[nzchar(names)]
+colnames(microsat_data) <- colnames(usat)[-1]
+rownames(microsat_data) <- names
+
+genind <- df2genind(as.data.frame(microsat_data), ncode=9, sep="/") # create s4 object 
+pops <- c(rep("MON", 78), rep("DIC",32), rep("POL", 64), rep("NAP",47)) 
+genind$pop <- as.factor(pops)
+
+genind_main <- genind[pop=c("MON","NAP","POL")] #remove DIC from analysis 
+x.gen <- tab(genind_main)
+pca.x <- dudi.pca(x.gen, scannf = FALSE, nf = 2)
+pca.x$eig
+PC1var <- round(pca.x$eig[1]/sum(pca.x$eig)*100, 2)
+PC2var <- round(pca.x$eig[2]/sum(pca.x$eig)*100, 2)
+
+
+pca.x$li$pop <- pop(genind_main)
+p_pca_usat <- ggplot(pca.x$li)  +
+  geom_point(aes(x=Axis1, y=Axis2, col=pop)) +
+  scale_color_manual(values=c("#FEB77EFF", "#972C80FF","#000004FF")) + 
+  labs(x=paste0("PC1 (", PC1var,"%)"),
+       y=paste0("PC2 (", PC2var,"%)")) +
+  # ggtitle("PCA of 189 KW individuals at 9 microsatellite loci") +
+  theme_bw() + 
+  theme(legend.position = "none") 
+
+
+###STRUCTURE plots ===============================================
+## wild pops only (no cross)
+#deg_nocross 
+#all_nocross 
+#subsamp.nocross <- sample(nrow(all_nocross), 5000, FALSE)
+#all_nocross_subsamp <- filter_snps(all_nocross[subsamp.nocross])
+
+#saveRDS(deg_nocross, file = "deg_nocross.filt.rds") #1644 SNPs
+#saveRDS(all_nocross_subsamp, file = "all_nocross.filt.rds") #5000 SNPs
+
+## plot structure for k= 1-4, try 10 runs per K and use clumpp, run by Will Hemstrom 
+structure_plots <- readRDS(file = "all_and_degs_nocross_structure_plots.RDS")
+
+p_str_usat <- structure_plots$microsats +
+  theme(legend.position = "none",
+        axis.title.x = element_blank(),
+        strip.text.y = element_blank()
+  ) 
+
+p_str_all <- structure_plots$all +
+  theme(legend.position = "none",
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        strip.text.y = element_blank())
+
+p_str_deg <- structure_plots$degs +
+  theme(legend.position = "none",
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+) 
+### Phylogenetic Tree=========
+## fastreeR 
+## Note: cannot get bootstrap values
+### Sample stastistic of the VCF file
+# myVcfIstats <- fastreeR::vcf2istats(inputFile = "/Users/andy/KW/09_angsd/kw_all_filt_maf05_nocross.vcf")
+# plot(myVcfIstats[,7:9])
+# 
+### Calculate distance from vcf  
+# myVcfDist <- fastreeR::vcf2dist(inputFile = "/Users/andy/KW/09_angsd/kw_all_filt_maf05_nocross.vcf", threads = 2)
+#       
+### histogram of distance
+# graphics::hist(myVcfDist, breaks = 100, main=NULL, xlab = "Distance", xlim = c(0,max(myVcfDist)))
+
+### myVcfTree <- fastreeR::dist2tree(inputDist = myVcfDist)
+
+## fastreeR uses vcf files as input 
+format_snps(all_nocross, output="vcf", chr="CHROM", outfile="all_nocross_filt.vcf")
+format_snps(deg_nocross, output="vcf", chr="CHROM", outfile="deg_nocross_filt.vcf")
+
+### get trees directly
+allsnps_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/all_nocross_filt.vcf", threads = 2)
+allsnps_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/04_deg_pipeline/data/", "", allsnps_tree) 
+#allsnps_tree <- gsub("*.sorted.bam", "", simple_tree)
+
+#use ggtree to customize tree plot
+allsnptree <- ape::read.tree(text= allsnps_tree)
+all_tree <- ggtree(allsnptree, layout="daylight") %<+% sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
+  theme(legend.position = "none") 
+  # ggtitle("fastreeR using all SNPs") 
+
+
+degsnps_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/deg_nocross_filt.vcf", threads = 2)
+degsnps_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/a05_angsd/degs/data/", "", degsnps_tree) 
+deg_sample_meta <- dplyr::filter(sample_meta, site!="NAPxMON") #dplyr
+deg_sample_meta$sample_ID <-  gsub("sorted","deg", deg_sample_meta$sample_ID)
+deg_sample_meta <- as.data.frame(deg_sample_meta)
+
+degsnps_tree <- ape::read.tree(text= degsnps_tree)
+deg_tree <- ggtree(degsnps_tree, layout="daylight") %<+% deg_sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) +
+  scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
+  theme(legend.position = "none")
+
+### microsat NJ tree
+## Plot NJ tree ====
+set.seed(42)
+genind_main # genind obj with all individuals from MON, NAP and POL 
+sub_genind <- genind_main[sample(nInd(genind_main), 50)] #subset for a visually simpler tree
+# d <- dist(genind_main) #full tree
+d <- dist(sub_genind)
+njtree <- d %>%
+  nj() %>%    # calculate neighbor-joining tree
+  ladderize() # organize branches by clade
+
+nInd(genind_main)
+pop_info <- as.data.frame(cbind(rownames(sub_genind$tab), as.character(pop(sub_genind))))
+# pop_info <- as.data.frame(cbind(rownames(genind_main$tab), as.character(pop(genind_main)))) # full tree
+colnames(pop_info) <- c("sample","site")
+
+usat_sub_tree <- ggtree(njtree, layout="daylight") %<+% pop_info + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) +   
+  scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) + 
+  theme(legend.position = "none")
+  # ggtitle("NJ tree using 9 microsatellite loci and 189 KW inviduals from 3 populations") 
+
+
+### plot figure 2 ====
+lay <- rbind(c(1,4,7),
+             c(2,5,8),
+             c(3,6,9))
+
+pdf("~/KW/figures/figure 2/fig2.pdf", width = 11, height = 8.5)
+grid.arrange(p_pca_usat, p_str_usat, usat_sub_tree,
+             p_pca_all,  p_str_all,  all_tree, 
+             p_pca_deg,  p_str_deg,  deg_tree, 
+             layout_matrix= lay)
+dev.off()
+
+#pdf("~/KW/figures/supplemental/usat_full_tree.pdf", width = 8.5, height = 11)
+#usat_tree
+#dev.off()
+
+
+# 1 snp per contig -- supplemental ====
+set.seed(42)
+keep <- snp.meta(all_nocross) %>% group_by(CHROM) %>% sample_n(1)
+keep <- which(snp.meta(all_nocross)$ID %in% keep$ID)
+
+keep_deg <- snp.meta(deg_nocross) %>% group_by(CHROM) %>% sample_n(1)
+keep_deg <- which(snp.meta(deg_nocross)$ID %in% keep_deg$ID)
+
+all_no_ld <- all_nocross[keep,]
+deg_no_ld <- deg_nocross[keep_deg,]
+
+# PCAs
+p_all_no_ld_pca <- plot_clusters(all_no_ld, facets="site", alt.palette = manual_col3)
+p_deg_no_ld_pca <- plot_clusters(deg_no_ld, facets="site", alt.palette = manual_col3)
+
+# NJ tree
+
+# transcriptome wide tree, 1 snp per contig 
+format_snps(all_no_ld, output="vcf", chr="CHROM", outfile="all_no_ld.vcf")
+all_no_ld_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/all_no_ld.vcf", threads = 2)
+all_no_ld_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/04_deg_pipeline/data/", "", all_no_ld_tree) 
+all_no_ld_tree <- ape::read.tree(text= all_no_ld_tree)
+p_all_no_ld_tree <- ggtree(all_no_ld_tree, layout="daylight") %<+% sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
+  theme(legend.position = "none") + 
+  ggtitle("transcriptome-wide SNPs NJ tree, 1 SNP per contig")
+
+### DEG Tree, 1 snp per contig 
+format_snps(deg_no_ld, output="vcf", chr="CHROM", outfile="deg_no_ld.vcf")
+deg_no_ld_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/deg_no_ld.vcf", threads = 2)
+deg_no_ld_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/a05_angsd/degs/data/", "", deg_no_ld_tree) 
+deg_no_ld_tree <- ape::read.tree(text= deg_no_ld_tree)
+deg_sample_meta <- dplyr::filter(sample_meta, site!="NAPxMON") #dplyr
+deg_sample_meta$sample_ID <-  gsub("sorted","deg", deg_sample_meta$sample_ID)
+deg_sample_meta <- as.data.frame(deg_sample_meta)
+
+p_deg_no_ld_tree <- ggtree(deg_no_ld_tree, layout="daylight") %<+% deg_sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
+  theme(legend.position = "none") + 
+  ggtitle("DEGs only NJ tree, 1 SNP per contig") 
+
+
+# Structure from Will 
+saveRDS(deg_no_ld, file = "deg_no_ld.rds") 
+saveRDS(all_no_ld, file = "all_no_ld.rds")
+
+lay <- rbind(c(1,4),
+             c(2,5),
+             c(3,6))
+
+
+pdf("~/KW/figures/supplemental /onesnppercontig.pdf", width = 11, height = 8.5)
+grid.arrange(p_all_no_ld_pca$plots$pca, p_all_no_ld_tree, 
+             p_deg_no_ld_pca$plots$pca, p_deg_no_ld_tree)
+dev.off()
+
+
+
+
+
+# FST distribution ==============
+### look at FST distribution 
+# get pairwise FST values to plot against importance 
+deg_monnap <- calc_pairwise_fst(deg_monnap, facets="site")
+all_monnap <- calc_pairwise_fst(all_monnap, facets="site")
+all_monnap_fst <-  get.snpR.stats(all_monnap, "site", "fst")
+
+all_fst_sorted <- all_monnap_fst$pairwise[order(-all_monnap_fst$pairwise$fst), ]
+str(all_fst_sorted)
+
+head(all_fst_sorted)
+all_fst_sorted[7087, ] #10%
+all_fst_sorted[11717, ] #25%
+all_fst_sorted[40526, ] #43%, fst < 0.01 
+
+
+View(all_fst_sorted)
+
+bins <- seq(-0.1, 0.5, by=0.01)
+
+deg_fst <- deg_monnap_fst$pairwise
+
+p <- ggplot(deg_fst) +
+  geom_histogram(aes(x=fst), breaks=bins) + 
+  ggtitle("deg snps FST distribution")
+
+all_fst <- all_monnap_fst$pairwise
+p1 <- ggplot(all_fst) +
+  geom_histogram(aes(x=fst), breaks=bins) + 
+  ggtitle("transcriptome-wide snps FST distribution")
+
+grid.arrange(p, p1, ncol=2)
+
+# FST vs. LFC plot ==========
+### FST vs. LFC plot ### 
+## get FST values and LFC for each contig 
+x <- all_monnap_fst$pairwise
+z <- deg_monnap_fst$pairwise
+res <- readRDS(file = "deseq_monnap.rds")
+res$CHROM <- rownames(res)
+  temp <- do.call(rbind, strsplit(res$CHROM, "\\|"))
+  res$CHROM <- temp[,1]
+y <- res
+
+df <- merge(x, y, by="CHROM")
+View(df)
+
+df$fst
+df$log2FoldChange
+
+ggplot(df) +
+  geom_point(aes(x=fst, y=log2FoldChange), size = 0.3)
+
+## only one FST per contig 
+set.seed(42)
+sampled_df <- df %>%
+  group_by(CHROM) %>%
+  sample_n(1)
+
+ggplot(sampled_df, aes(x=fst, y=log2FoldChange)) +
+  geom_point(size=0.3)
+
+## deg snps only 
+deg_df <- merge(z, y, by="CHROM")
+ggplot(deg_df) +
+  geom_point(aes(x=fst, y=log2FoldChange), size = 0.3)
+
+# SNP Verification =====
+
+### make sure that all contigs are within the DEG transcriptome 
+deg_angsd <- filter_snps(deg_monnap, maf = 0.05, maf_facets = "site")
+deg_angsd_meta <- snp.meta(deg_angsd)
+deg_angsd_snp_CHROM <- as.data.frame(deg_angsd_meta$CHROM)
+
+length(unique(deg_angsd_meta$CHROM)) # number of contigs in the deg set with SNPs
+deg_contig_names <- read.csv("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/05_angsd/degs/rnaspades_degs_contignames.txt", header = FALSE)
+table(deg_angsd_snp_CHROM$`deg_angsd_meta$CHROM` %in% deg_contig_names$V1) # should all return true 
+
+## Figure out how many snps are on each contig 
+hist(table(deg_angsd_snp_CHROM), breaks=30)
+
+sort(table(deg_angsd_snp_CHROM))
+# highest SNPs per contig is on NODE_16533_length_6329_cov_5591.178389_g366_i14
+# NODE_87022_length_3018_cov_8698.421732_g5957_i36
+# NODE_12782_length_6875_cov_7230.180388_g3001_i3
+
+
+##  higher than expected SNPs per contigs, checking to see if the SNPs on the same contigs are high in LD 
+snp.meta(deg_monnap)$CHROM <- gsub("\\.", "__", snp.meta(deg_monnap)$CHROM)
+deg_monnap <- calc_pairwise_ld(deg_monnap, facets = "site")
+deg_monnap_ld <- get.snpR.stats(deg_monnap, "site", "LD")
+View(deg_monnap_ld$prox)
+
+
+
+
+
+deg_monnap <- readRDS("~/../Downloads/deg_monnap_LD.RDS")
+snp.meta(deg_monnap)$CHROM <- gsub("\\.", "__", snp.meta(deg_monnap)$CHROM)
+deg_monnap <- calc_pairwise_ld(deg_monnap, facets = "site.CHROM", verbose = TRUE, CLD = FALSE)
+deg_monnap_ld <- get.snpR.stats(deg_monnap, "site.CHROM", "LD")
+snp.tab <- snp.meta(deg_monnap)
+snp.tab <- table(snp.tab$CHROM)
+deg_monnap_ld$prox[,meanDprime := mean(Dprime, na.rm = TRUE), by = .(s1_CHROM, sample.subfacet)]
+r <- deg_monnap_ld$prox
+r <- unique(r[,c("s1_CHROM", "sample.subfacet", "meanDprime")])
+r$nsnps <- snp.tab[match(r$s1_CHROM, names(snp.tab))]
+library(ggplot2)
+ggplot(r, aes(x = nsnps, y = meanDprime, color = sample.subfacet)) +
+  geom_point() +
+  theme_bw() +
+  khroma::scale_color_highcontrast()
+
+
+
+
+
+# Examine duplicates ====
+dup_deg_monnap <- deg_monnap[family=c("T1E1", "T1E18", "T1E2", "T1E4", "T1E5", "T1E6", "T6E18", "T6E21", "T6E23", "T6E24", "T6E44", "T6E45")] 
 
 p2 <- plot_clusters(dup_deg_monnap, facets="family")
-p <- plot_clusters(deg_monnap, facets="site", alt.palette = manual_col2)
-p$plots$pca + 
-  ggtitle("A. PCA of DEG SNPs ")
-
+p <- plot_clusters(deg_monnap, , alt.palette = manual_col2)
 df <- as.data.frame(p$data)
 df.dup <- subset(df, pca.family %in% c("T1E1", "T1E18", "T1E2", "T1E4", "T1E5", "T1E6", "T6E18", "T6E21", "T6E23", "T6E24", "T6E44", "T6E45"))
 
-### connect the duplicates 
 dupplot <- p$plots$pca + 
   geom_line(data=  df.dup, aes(pca.PC1, pca.PC2, group=pca.family), color="darkgray") + 
   geom_point(data = df.dup, aes(pca.PC1, pca.PC2, color=pca.site)) +
@@ -112,145 +428,98 @@ dupplot <- p$plots$pca +
 # xy.coord$duplicate <- xy.coord$family %in% c("T1E1", "T1E18", "T1E2", "T1E4", "T1E5", "T1E6", "T6E18", # "T6E21", "T6E23", "T6E24", "T6E44", "T6E45")
 # write.csv(xy.coord, "kw_SNP_xycoord.csv")
 
-###### Random Forest to see how many SNPs exlpain the vairance among samples ###############
-rf_deg <- run_random_forest(deg_monnap, response = "site", importance = "permutation")
-rf_all <- run_random_forest(all_monnap, response = "site", importance = "permutation")
+#### p-values from Mark 
+rnaseq_mon_pval <- read.table("./duplicate_comparison/p-vals_rnaseq_Monterey.txt")
+rnaseq_nap_pval <- read.table("./duplicate_comparison/p-vals_rnaseq_Naples.txt")
+snps_mon_pval   <- read.table("./duplicate_comparison/p-vals_snps_Monterey.txt")
+snps_nap_pval   <- read.table("./duplicate_comparison/p-vals_snps_Naples.txt")
 
-par(mar = c(1, 1, 1, 1))
-plot(density(rf_deg$models$.base_.base$model$variable.importance))
-plot(density(rf_all$models$.base_.base$model$variable.importance))
+# Code Archive ====
+### filter SNPs 
+# removing snps most out of HWE 
+# look within site and do multiple testing correction 
+# remove ones most out of HWE -- maybe where pools are heterogeneity 
+# tried maf = 0.01 and 0.03, does not change patterns much 
 
-rf_deg$models$.base_.base$predictions
-rf_all$models$.base_.base$predictions
-
-deg_monnap_meta <- snp.meta(deg_monnap)
-deg_monnap_snp_pos <- paste0(deg_monnap_meta$CHROM, "_", deg_monnap_meta$position)
-all_monnap_meta <- snp.meta(all_monnap)
-all_monnap_snp_pos <- paste0(all_monnap_meta$CHROM, "_", all_monnap_meta$position)
-
-
-deg_snps_in_transcriptome <- all_monnap_snp_pos %in% deg_monnap_snp_pos 
-
-# double check that %in% works as expected 
-deg_monnap_snp_pos[101]
-grep(deg_monnap_snp_pos[101], all_monnap_snp_pos)
-deg_snps_in_transcriptome[1741]
-
-rfdf <- as.data.frame(cbind(rf_all$models$.base_.base$model$variable.importance,deg_snps_in_transcriptome))
-plot(rfdf$V1, col= factor(rfdf$deg_snps_in_transcriptome), ylab="Importance in random forest", main="Importance of each SNP in random forest model (MON and NAP only)")
- 
-################################################### Phylogenetic Tree ####################################################
-###################################################### fastreeR ##########################################################
-##### Note: cannot get bootstrap values
+#all_filt <- filter_snps(all_vcf, hwe = .05, hwe_facets ="site", fwe_method = "holm", maf = 0.05, maf_facets = "site") #63031
+#deg_filt <- filter_snps(deg_vcf, hwe = .05, hwe_facets ="site", fwe_method = "holm", maf = 0.05, maf_facets = "site")
 
 
-# https://4va.github.io/biodatasci/r-ggtree.html ggtree tutorial 
-# create tree 
 
-format_snps(deg_nocross, output="vcf", chr="CHROM", outfile="kw_deg_filt_maf05_nocross.vcf" )####
-format_snps(all_nocross, output="vcf", chr="CHROM", outfile="kw_all_filt_maf05_nocross.vcf" )####
+####### test angsd vs. gatk ###### use %in%
 
-### Sample stastistic of the VCF file
-### myVcfIstats <- fastreeR::vcf2istats(inputFile = "/Users/andy/KW/09_angsd/kw_all_filt_maf05_nocross.vcf")
-### plot(myVcfIstats[,7:9])
-### 
-### ### Calculate distance from vcf  
-### myVcfDist <- fastreeR::vcf2dist(inputFile = "/Users/andy/KW/09_angsd/kw_all_filt_maf05_nocross.vcf", threads = 2)
-###       
-### ### histogram of distance
-### graphics::hist(myVcfDist, breaks = 100, main=NULL, 
-###                     xlab = "Distance", xlim = c(0,max(myVcfDist)))
-###       
-### myVcfTree <- fastreeR::dist2tree(inputDist = myVcfDist)
+monnap_sample_meta <- sample_meta[sample_meta$site==c("MON") | sample_meta$site==c("NAP") , ]
 
-allsnps_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/kw_all_filt_maf05_nocross.vcf", threads = 2)
-allsnps_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/04_deg_pipeline/data/", "", allsnps_tree) 
-# allsnps_tree <- gsub("*.sorted.bam", "", simple_tree)
+deg_gatk <- import.snpR.data("../5_GATK/rnaspades_annotated_degs.vcf.gz", sample.meta = monnap_sample_meta)
 
-#use ggtree to customize tree plot
-allsnptree <- ape::read.tree(text= allsnps_tree)
-
-p <- ggtree(allsnptree, layout="daylight") %<+% sample_meta + 
- geom_tiplab(aes(label = factor(site), color = site, geom = "label")) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
- theme(legend.position = "none") +
- ggtitle("fastreeR using all SNPs") 
-
-######## plot deg tree #########
-
-degsnps_tree <-  fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/kw_deg_filt_maf05_nocross.vcf", threads = 2)
-
-#sub sample names 
-
-#deg_simple_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/a05_angsd/degs/data/","",degsnps_tree)
-#deg_simple_tree <- gsub("deg", "sorted", deg_simple_tree) 
-
-deg_tree <- ape::read.tree(text= degsnps_tree)
+deg_gatk <- filter_snps(deg_gatk, hwe = .05, hwe_facets ="site", fwe_method = "holm", maf = 0.05, maf_facets = "site")
+deg_angsd_meta <- snp.meta(deg_angsd)
 
 
-# Get the dna format 
+deg_angsd_snp_pos <- paste0(deg_angsd_meta$CHROM, "_", deg_angsd_meta$position)
+deg_gatk_snp_pos <- paste0(deg_gatk_meta$CHROM, "_", deg_gatk_meta$position)
 
-#format_snps(deg_dat, output="vcf", chr="CHROM", outfile="kw_deg_filt_maf05.vcf")
 
-p2 <- ggtree(deg_tree, layout="daylight") %<+% sample_meta + 
-  geom_tiplab(aes(label = factor(site), color = site, geom = "label")) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
+#### trees stuff 
+### export for raxml (fasta or phylip format)
+nocross.filt <- filter_snps(all_vcf[site=-"NAPxMON"], hwe = .05, hwe_facets ="site", fwe_method = "holm", maf = 0.05, maf_facets = "site")
+subsamp.nocross.filt <- sample(nrow(nocross.filt), 5000, FALSE)
+all_nocross.subsamp.filt <- filter_snps(nocross.filt[subsamp.nocross.filt])
+format_snps(all_nocross.subsamp.filt, output="fasta", chr="CHROM", outfile="/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/raxml/all_noscross_subsamp_filt.fasta") 
+
+all.monnap.filt <- filter_snps(all_vcf[site=-c("NAPxMON","POL")], hwe = .05, hwe_facets ="site", fwe_method = "holm", maf = 0.05, maf_facets = "site")
+subsamp.monnap <- sample(nrow(all.monnap.filt), 5000, FALSE)
+all_monnap_subsamp_filt  <- filter_snps(all.monnap.filt[subsamp.monnap])
+sample.meta(all_monnap_subsamp_filt)
+#format_snps(all_monnap.subsamp, output="fasta", chr="CHROM", outfile="/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/raxml/all_monnap_subsamp.fasta") 
+
+#format_snps(deg_monnap, output="fasta", chr="CHROM", outfile="/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/raxml/deg_monnap_maf05.fasta") 
+
+#format_snps(deg_nocross, output="fasta", chr="CHROM", outfile="/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/raxml/deg_nocross_maf05.fasta") 
+
+raxml_tree <- read.tree("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/raxml/RAxML_bestTree.all_nocross_subsamp.tre") 
+# read in the tree output from SNPhylo 
+raxml_tree$tip.label <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/04_deg_pipeline/data/","",raxml_tree$tip.label)
+
+ggtree(raxml_tree, layout="daylight") %<+% sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label")) + 
+  scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF", NAPxMON="#d1426fff")) +
   theme(legend.position = "none") +
-  ggtitle("fastreeR using deg SNPs") 
- # geom_text(aes(label=node), hjust=-.3) + 
-
-### code to try to bootstrap, doesn't work 
-#dna <- format_snps(deg_nocross, output="sn")
-# dna <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/a05_angsd/degs/data/","",dna)#
-# dna <- gsub("deg", "sorted", dna) 
-# ape::boot.phylo(deg_tree, dna, FUN = fastreeR::vcf2dist(inputFile = "/Users/andy/KW/09_angsd/kw_deg_filt_maf05_nocross.vcf"))
+  ggtitle("RAXML using 5k neutral SNPs") 
 
 
-################################################### STRUCTURE Plots########################################################
+raxml_deg_tree <- read.tree("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/raxml/deg_tree/RAxML_bestTree.deg_nocross.tre") 
+raxml_deg_tree$tip.label <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/a05_angsd/degs/data/","",raxml_deg_tree$tip.label)
+# deg_sample_meta <- filter(sample_meta, site==c("MON","NAP","POL")) #dplyr
+deg_sample_meta <- sample_meta
+deg_sample_meta$sample_ID <-  gsub("sorted","deg", deg_sample_meta$sample_ID)
+deg_sample_meta <- as.data.frame(deg_sample_meta)
+
+ggtree(raxml_deg_tree, layout="daylight") %<+% deg_sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label")) + 
+  scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF", NAPxMON="#d1426fff")) +
+  theme(legend.position = "none") +
+  ggtitle("RAXML using deg SNPs (nocross)") 
+
+# export monnap vcf for snphylo 
+snp.meta(all_monnap)$CHROM <- 1
+format_snps(all_nocross, output="vcf", chr="CHROM", outfile="/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/monnap_maf05.vcf") 
+format_snps(all_monnap, output="vcf", chr="CHROM", outfile="/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/monnap_maf05.vcf") 
 
 
-## all samples 
-# saveRDS(deg_dat, file = "deg.rds") #1596 SNPs
-# saveRDS(all_dat, file = "all_dat.rds") #5000 SNPs
-
-## wild pops only (no cross)
-deg_nocross <- deg_vcf[site=-"NAPxMON"]
-deg_nocross.filt <- filter_snps(deg_nocross, maf = 0.05) #1644
-
-all_nocross <- all_vcf[site=-"NAPxMON"]
-all_nocross.filt <- filter_snps(all_nocross, maf = 0.05)
-subsamp <- sample(nrow(all_nocross.filt), 5000, FALSE)
-all_nocross.filt <- filter_snps(all_nocross.filt[subsamp])
-
-deg_monnap <- deg_vcf[site=c("MON","NAP")] 
-deg_monnap.filt <- filter_snps(deg_monnap, maf = 0.05) 
-
-all_monnap <- all_vcf[site=c("MON","NAP")]
-all_monnap.filt <- filter_snps(all_monnap, maf = 0.05)
-subsamp.monnap <- sample(nrow(all_monnap.filt), 5000, FALSE)
-all_monnap.filt <- filter_snps(all_monnap.filt[subsamp.monnap])
+# plot snphylo trees 
+kw_phyDat <- phangorn::read.phyDat("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/snphylo/kw_deg.fasta", format = "fasta") # read in aligned fasta file, an output from SNPhylo
+kw_tree <- read.tree("/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelks_rnaseq/01_tree/snphylo/kw_deg.ml.tree")# read in the tree output from SNPhylo 
+sample_meta$sample_ID <- gsub(".sorted.bam","",sample_meta$sample_ID)
+ggtree(kw_tree, layout="daylight") %<+% sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label")) + 
+  scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF", NAPxMON="#d1426fff")) +
+  theme(legend.position = "none") +
+  ggtitle("snphylo using deg SNPs and all populations") 
 
 
-saveRDS(deg_nocross.filt, file = "deg_nocross.filt.rds") #1644 SNPs
-saveRDS(all_nocross.filt, file = "all_nocross.filt.rds") #5000 SNPs
 
-saveRDS(deg_monnap.filt, file = "deg_monnap.filt.rds") #1582
-saveRDS(all_monnap.filt, file = "all_monnap.filt.rds") #5000 SNPs
-
-## plot structure for k= 1-4, try 10 runs per K and use clumpp 
-plot_structure(dat, method="structure", k=4:6, structure_path = "./STRUCTURE/structure",facet = "site", iteration = 100000, burnin = 20000, alt.palette = manual_col)
-
-
-p_structure <- plot_structure(deg_monnap, method = "structure", structure_path = "../08_deg_snps/STRUCTURE/structure", facet = "site", iterations = 100000, burnin = 10000, k = 2, cleanup = TRUE, alt.palette = manual_col2)
-
-p_structure$plot + 
-  ggtitle("B. STRUCTURE analysis using DEG SNPs") +
-  xlab("Location")
-
-# plot_structure(nodeg_dat,method = "structure", structure_path = "../08_deg_snps/STRUCTURE/structure", facet = "site", iterations = 10000, iteration = 10000, burnin = 100, k = 2:4, cleanup = TRUE)
-
-
-deg_structure <- read.csv(file="structrure_ln.txt", sep=" ")
-deg_structure <- as.data.table(deg_structure)
-
+## evanno 
 evanno <- deg_structure[, mean(est_ln_prob), by = K]
 colnames(evanno)[2] <- "mean_est_ln_prob"
 evanno$lnpK <- NA
@@ -273,24 +542,10 @@ evanno_m$variable[evanno_m$variable == "deltaK"] <- "log[10](Delta*K)"
 evanno_m$variable[evanno_m$variable == "mean_est_ln_prob"] <- "bar(ln(Prob))"
 
 
+#### export filtered SNP vcf 
+#format_snps(deg_dat, output="vcf", chr="CHROM", outfile="kw_deg_filt_maf05.vcf")
+#format_snps(all_dat, output="vcf", chr="CHROM", outfile="kw_all_filt_maf05.vcf")
 
-
-
-####### test angsd vs. gatk ###### use %in%
-monnap_sample_meta <- sample_meta[sample_meta$site==c("MON") | sample_meta$site==c("NAP") , ]
-deg_gatk <- import.snpR.data("../5_GATK/rnaspades_annotated_degs.vcf.gz", sample.meta = monnap_sample_meta)
-
-deg_gatk <- filter_snps(deg_gatk, maf = 0.05)
-
-deg_monnap_meta <- snp.meta(deg_monnap)
-deg_gatk_meta <- snp.meta(deg_gatk)
-
-deg_monnap_snp_pos <- paste0(deg_monnap_meta$CHROM, "_", deg_monnap_meta$position)
-deg_gatk_snp_pos <- paste0(deg_gatk_meta$CHROM, "_", deg_gatk_meta$position)
-
-table(deg_monnap_snp_pos %in% deg_gatk_snp_pos) #661 shared SNPs, 835 identified by ANGSD but not in gatk 
-table(deg_gatk_snp_pos%in% deg_monnap_snp_pos) #661 shared SNPs, 40361 identified by gatk but not in angsd 
-
-# can merge SNPs from gatk AND angsd if desired 
-m <- merge_snpRdata(deg_monnap, deg_gatk)
-?merge_snpRdata
+## explort snp position for more SNP calling of TAE samples 
+#all_snp_rf <- paste0(snp.meta(all_filt)$CHROM,":",snp.meta(all_filt)$position)
+#write.csv(all_snp_rf, "/Users/andy/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes.noindex/Bell Scratch/kellets_whelk_tae/scripts/kw_all_snp_rf.txt", row.names=FALSE, quote=FALSE, col.names = FALSE )
