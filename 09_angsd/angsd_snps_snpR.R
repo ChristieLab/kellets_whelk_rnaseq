@@ -47,32 +47,42 @@ all_nocross <- calc_pairwise_fst(all_nocross, facets="site")
 fst <- get.snpR.stats(all_nocross, "site", "fst")
 fsts <- fst$pairwise
 
-keep <- unique(fsts$ID[which(fsts$fst <= 0.1)])
+keep <- unique(fsts$ID[which(fsts$fst <= 0.01)])
 keep <- which(snp.meta(all_nocross)$ID %in% keep)
 lowfst <- all_nocross[keep,]
 
+nsnps(lowfst)/nsnps(all_nocross)
+
+
 # Filter out high importance snps in random forest 
-rfdf <- readRDS("rfdf.rds")
-unique(rfdf$snp_pos[which(rfdf$Importance <= 0)])
-keep <- unique(rfdf$snp_pos[which(rfdf$Importance <= 0)])
-keep <- which(snp.meta(all_nocross)$ID %in% keep)
-low_import <- all_nocross[keep,]
+#rfdf <- readRDS("rfdf.rds")
+#rfdf[(nrow(sorted.rfdf) * 0.9),]$Importance
+## keep <- unique(rfdf$snp_pos[which(rfdf$Importance <= rfdf[(nrow(sorted.rfdf) * 0.9#),]$Importance)])
+#keep <- unique(rfdf$snp_pos[which(rfdf$Importance <= 0)]) 
+#keep <- which(snp.meta(all_nocross)$ID %in% keep)
+#low_import <- all_nocross[keep,] # 60941 snps 
+#plot_clusters(low_import, facets="site", alt.palette=manual_col3)
+#nsnps(low_import)/nsnps(all_nocross)
+#colnames(rfdf)
 
 
 ### PCAs ============================================================
 # set manual colors 
-# manual_col4 <- c("#FEB77EFF", "#972C80FF","#d1426fff","#000004FF")
-manual_col3 <- c("#FEB77EFF", "#972C80FF","#000004FF")
+manual_col4 <- c("#000004FF", "#D1426FFF", "#972C80FF", "#FEB77EFF")
+manual_col3 <- c("#000004FF", "#D1426FFF", "#FEB77EFF")
 # manual_col2 <- c("#FEB77EFF", "#972C80FF")
+
 
 deg_pca <- plot_clusters(deg_nocross, facets="site", alt.palette = manual_col3)
 all_pca <- plot_clusters(all_nocross, facets="site", alt.palette = manual_col3)
+low_fst_pca <- plot_clusters(lowfst, facets="site", alt.palette=manual_col3)
+
 plot_clusters(lowfst, facets="site", alt.palette=manual_col3) 
-plot_clusters(low_import, facets="site", alt.palette=manual_col3) 
 
 
 p_pca_deg <- deg_pca$plots$pca + theme(legend.position = "none")
 p_pca_all <- all_pca$plots$pca + theme(legend.position = "none")
+p_pca_low <- low_fst_pca$plots$pca + theme(legend.position = "none")
 
 ## microsat PCA ====
 ## data preparation 
@@ -128,6 +138,9 @@ p_pca_usat <- ggplot(pca.x$li)  +
 #saveRDS(deg_nocross, file = "deg_nocross.filt.rds") #1644 SNPs
 #saveRDS(all_nocross_subsamp, file = "all_nocross.filt.rds") #5000 SNPs
 
+#subsamp.lowfst <- sample(nrow(lowfst), 5000, FALSE)
+#saveRDS(lowfst, file = "low_fst_nocross.filt.rds")
+
 ## plot structure for k= 1-4, try 10 runs per K and use clumpp, run by Will Hemstrom 
 structure_plots <- readRDS(file = "all_and_degs_nocross_structure_plots.RDS")
 
@@ -148,6 +161,8 @@ p_str_deg <- structure_plots$degs +
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
 ) 
+
+
 ### Phylogenetic Tree=========
 ## fastreeR 
 ## Note: cannot get bootstrap values
@@ -166,19 +181,19 @@ p_str_deg <- structure_plots$degs +
 ## fastreeR uses vcf files as input 
 format_snps(all_nocross, output="vcf", chr="CHROM", outfile="all_nocross_filt.vcf")
 format_snps(deg_nocross, output="vcf", chr="CHROM", outfile="deg_nocross_filt.vcf")
+format_snps(lowfst , output="vcf", chr="CHROM", outfile="low_fst_nocross.vcf")
 
 ### get trees directly
 allsnps_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/all_nocross_filt.vcf", threads = 2)
 allsnps_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/04_deg_pipeline/data/", "", allsnps_tree) 
 #allsnps_tree <- gsub("*.sorted.bam", "", simple_tree)
 
-#use ggtree to customize tree plot
-allsnptree <- ape::read.tree(text= allsnps_tree)
+
+allsnptree <- ape::read.tree(text= allsnps_tree) #use ggtree to customize tree plot
 all_tree <- ggtree(allsnptree, layout="daylight") %<+% sample_meta + 
   geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
   theme(legend.position = "none") 
   # ggtitle("fastreeR using all SNPs") 
-
 
 degsnps_tree <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/deg_nocross_filt.vcf", threads = 2)
 degsnps_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/a05_angsd/degs/data/", "", degsnps_tree) 
@@ -191,6 +206,21 @@ deg_tree <- ggtree(degsnps_tree, layout="daylight") %<+% deg_sample_meta +
   geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) +
   scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
   theme(legend.position = "none")
+
+# low importance tree
+low_fst_nocross <- fastreeR::vcf2tree(inputFile = "/Users/andy/KW/09_angsd/low_fst_nocross.vcf", threads = 2)
+low_fst_tree <- gsub("/scratch/bell/lee3617/kellets_whelks_rnaseq/04_deg_pipeline/data/", "", low_fst_nocross) 
+
+#use ggtree to customize tree plot
+low_fst_tree <- ape::read.tree(text= low_fst_tree)
+p_low_fst_tree <- ggtree(low_fst_tree, layout="daylight") %<+% sample_meta + 
+  geom_tiplab(aes(label = factor(site), color = site, geom = "label"), size=1.5) + scale_color_manual(values=c(MON = "#FEB77EFF", NAP = "#972C80FF", POL="#000004FF")) +
+  theme(legend.position = "none") 
+
+# ggtitle("fastreeR using all SNPs") 
+
+
+
 
 ### microsat NJ tree
 ## Plot NJ tree ====
@@ -216,12 +246,14 @@ usat_sub_tree <- ggtree(njtree, layout="daylight") %<+% pop_info +
 
 
 ### plot figure 2 ====
-lay <- rbind(c(1,4,7),
-             c(2,5,8),
-             c(3,6,9))
+lay <- cbind(c(1,2,3),
+             c(4,5,6),
+             c(7,8,9),
+             c(10,11,12))
 
 pdf("~/KW/figures/figure 2/fig2.pdf", width = 11, height = 8.5)
 grid.arrange(p_pca_usat, p_str_usat, usat_sub_tree,
+             p_pca_low, p_str_low_fst, p_low_fst_tree,
              p_pca_all,  p_str_all,  all_tree, 
              p_pca_deg,  p_str_deg,  deg_tree, 
              layout_matrix= lay)
@@ -292,42 +324,46 @@ dev.off()
 
 
 
+
+
+
+####### Figure 3 =====
 # FST distribution ==============
 ### look at FST distribution 
 # get pairwise FST values to plot against importance 
 deg_monnap <- calc_pairwise_fst(deg_monnap, facets="site")
 all_monnap <- calc_pairwise_fst(all_monnap, facets="site")
 all_monnap_fst <-  get.snpR.stats(all_monnap, "site", "fst")
+deg_monnap_fst <-  get.snpR.stats(deg_monnap, "site", "fst")
 
 all_fst_sorted <- all_monnap_fst$pairwise[order(-all_monnap_fst$pairwise$fst), ]
 str(all_fst_sorted)
 
-head(all_fst_sorted)
-all_fst_sorted[7087, ] #10%
-all_fst_sorted[11717, ] #25%
-all_fst_sorted[40526, ] #43%, fst < 0.01 
-
-
-View(all_fst_sorted)
-
 bins <- seq(-0.1, 0.5, by=0.01)
-
 deg_fst <- deg_monnap_fst$pairwise
 
 p <- ggplot(deg_fst) +
   geom_histogram(aes(x=fst), breaks=bins) + 
-  ggtitle("deg snps FST distribution")
+  ggtitle("deg snps FST distribution") +
+  theme_bw()
 
 all_fst <- all_monnap_fst$pairwise
 p1 <- ggplot(all_fst) +
   geom_histogram(aes(x=fst), breaks=bins) + 
-  ggtitle("transcriptome-wide snps FST distribution")
+  ggtitle("transcriptome-wide snps FST distribution") + 
+  theme_bw()
 
-grid.arrange(p, p1, ncol=2)
+#pdf("~/KW/figures/supplemental /fst_distribution_monnap.pdf", width = 8.5, height = 8.5)
+grid.arrange(p, p1, ncol=1)
+#dev.off()
 
 # FST vs. LFC plot ==========
-### FST vs. LFC plot ### 
 ## get FST values and LFC for each contig 
+all_monnap <- calc_pairwise_fst(all_monnap, facets="site")
+deg_monnap <- calc_pairwise_fst(deg_monnap, facets="site")
+all_monnap_fst <- get.snpR.stats(all_monnap, facets="site", stats="fst")
+deg_monnap_fst <- get.snpR.stats(deg_monnap, facets="site", stats="fst")
+
 x <- all_monnap_fst$pairwise
 z <- deg_monnap_fst$pairwise
 res <- readRDS(file = "deseq_monnap.rds")
@@ -342,8 +378,32 @@ View(df)
 df$fst
 df$log2FoldChange
 
-ggplot(df) +
-  geom_point(aes(x=fst, y=log2FoldChange), size = 0.3)
+p <- ggplot(df) +
+  geom_point(aes(x=fst, y=log2FoldChange), size = 0.3) + 
+  geom_smooth(method=lm, aes(x=fst, y=log2FoldChange)) +
+  ggtitle("Transcriptome-wide SNPs")
+p
+
+## deg snps only 
+deg_df <- merge(z, y, by="CHROM")
+p2 <- ggplot(deg_df) +
+  geom_point(aes(x=fst, y=log2FoldChange), size = 0.3) + 
+  geom_smooth(method=lm, aes(x=fst, y=log2FoldChange)) +
+  ggtitle("DEG SNPs")
+
+## test for interaction 
+p_lfc_fst <- ggplot() + 
+  geom_point(data=df, aes(x=fst, y=log2FoldChange), size = 0.3) + 
+  geom_smooth(data=df, method=lm, aes(x=fst, y=log2FoldChange), col="black") +
+  geom_point(data=deg_df, aes(x=fst, y=log2FoldChange), size = 0.3, col="darkred") + 
+  geom_smooth(data=deg_df, method=lm, aes(x=fst, y=log2FoldChange), col="darkred") + 
+  theme_bw()
+  
+# with text
+p_lfc_fst_text <- p_lfc_fst + 
+  geom_text(aes(x = .29, y = -1.70, label= paste0("Transcriptome-wide SNPs, Slope: ", round(coef(lm(log2FoldChange ~ fst, data = df))["fst"], 2),", p < ", round(summary(lm(log2FoldChange ~ fst, data = df))$coefficients[2, 4], 2)))) + 
+  geom_text(aes(x = .34, y = 1.65, label= paste0("DEG SNPs, Slope: ", round(coef(lm(log2FoldChange ~ fst, data = deg_df))["fst"], 2),", p < ", round(summary(lm(log2FoldChange ~ fst, data = deg_df))$coefficients[2, 4], 2))), color="darkred") +
+  theme(legend.position = "none")
 
 ## only one FST per contig 
 set.seed(42)
@@ -351,14 +411,16 @@ sampled_df <- df %>%
   group_by(CHROM) %>%
   sample_n(1)
 
-ggplot(sampled_df, aes(x=fst, y=log2FoldChange)) +
-  geom_point(size=0.3)
+p1 <- ggplot(sampled_df, aes(x=fst, y=log2FoldChange)) +
+  geom_point(size=0.3) + 
+  geom_smooth(method=lm, aes(x=fst, y=log2FoldChange)) +
+  ggtitle("Transcriptome-wide SNPs, only one SNP per contig")
 
-## deg snps only 
-deg_df <- merge(z, y, by="CHROM")
-ggplot(deg_df) +
-  geom_point(aes(x=fst, y=log2FoldChange), size = 0.3)
+#pdf("~/KW/figures/supplemental /fstvslfc.pdf", width = 11, height = 8.5)
+#grid.arrange(p, p1, p2, ncol=3)
+#dev.off()
 
+##### Supplemental ==== 
 # SNP Verification =====
 
 ### make sure that all contigs are within the DEG transcriptome 
@@ -385,10 +447,6 @@ deg_monnap <- calc_pairwise_ld(deg_monnap, facets = "site")
 deg_monnap_ld <- get.snpR.stats(deg_monnap, "site", "LD")
 View(deg_monnap_ld$prox)
 
-
-
-
-
 deg_monnap <- readRDS("~/../Downloads/deg_monnap_LD.RDS")
 snp.meta(deg_monnap)$CHROM <- gsub("\\.", "__", snp.meta(deg_monnap)$CHROM)
 deg_monnap <- calc_pairwise_ld(deg_monnap, facets = "site.CHROM", verbose = TRUE, CLD = FALSE)
@@ -404,10 +462,6 @@ ggplot(r, aes(x = nsnps, y = meanDprime, color = sample.subfacet)) +
   geom_point() +
   theme_bw() +
   khroma::scale_color_highcontrast()
-
-
-
-
 
 # Examine duplicates ====
 dup_deg_monnap <- deg_monnap[family=c("T1E1", "T1E18", "T1E2", "T1E4", "T1E5", "T1E6", "T6E18", "T6E21", "T6E23", "T6E24", "T6E44", "T6E45")] 
