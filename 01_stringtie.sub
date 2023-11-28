@@ -1,0 +1,85 @@
+#!/bin/bash
+
+#SBATCH --job-name=4_stringtie_rnaspadesannot
+#SBATCH -A standby
+#SBATCH -N 1
+#SBATCH -n 20
+#SBATCH -t 4:00:00
+#SBATCH --exclusive
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+#SBATCH --output slurm-%J-%x.out
+
+cd $SLURM_SUBMIT_DIR # set this if not using sed in Makefile
+module load biocontainers
+module load samtools/1.8
+stringtie kw001.sorted.bam -l s2 -p 4 -o kw001.sorted.bam.gtf
+stringtie kw002.sorted.bam -l s2 -p 4 -o kw002.sorted.bam.gtf
+stringtie kw003.sorted.bam -l s2 -p 4 -o kw003.sorted.bam.gtf
+stringtie kw004.sorted.bam -l s2 -p 4 -o kw004.sorted.bam.gtf
+stringtie kw005.sorted.bam -l s2 -p 4 -o kw005.sorted.bam.gtf
+stringtie kw006.sorted.bam -l s2 -p 4 -o kw006.sorted.bam.gtf
+stringtie kw007.sorted.bam -l s2 -p 4 -o kw007.sorted.bam.gtf
+stringtie kw008.sorted.bam -l s2 -p 4 -o kw008.sorted.bam.gtf
+stringtie kw009.sorted.bam -l s2 -p 4 -o kw009.sorted.bam.gtf
+stringtie kw010.sorted.bam -l s2 -p 4 -o kw010.sorted.bam.gtf
+stringtie kw011.sorted.bam -l s2 -p 4 -o kw011.sorted.bam.gtf
+stringtie kw012.sorted.bam -l s2 -p 4 -o kw012.sorted.bam.gtf
+stringtie kw013.sorted.bam -l s2 -p 4 -o kw013.sorted.bam.gtf
+stringtie kw014.sorted.bam -l s2 -p 4 -o kw014.sorted.bam.gtf
+stringtie kw015.sorted.bam -l s2 -p 4 -o kw015.sorted.bam.gtf
+stringtie kw016.sorted.bam -l s2 -p 4 -o kw016.sorted.bam.gtf
+stringtie kw017.sorted.bam -l s2 -p 4 -o kw017.sorted.bam.gtf
+stringtie kw018.sorted.bam -l s2 -p 4 -o kw018.sorted.bam.gtf
+stringtie kw019.sorted.bam -l s2 -p 4 -o kw019.sorted.bam.gtf
+stringtie kw020.sorted.bam -l s2 -p 4 -o kw020.sorted.bam.gtf
+stringtie kw021.sorted.bam -l s2 -p 4 -o kw021.sorted.bam.gtf
+stringtie kw022.sorted.bam -l s2 -p 4 -o kw022.sorted.bam.gtf
+stringtie kw023.sorted.bam -l s2 -p 4 -o kw023.sorted.bam.gtf
+stringtie kw024.sorted.bam -l s2 -p 4 -o kw024.sorted.bam.gtf
+stringtie kw025.sorted.bam -l s2 -p 4 -o kw025.sorted.bam.gtf
+stringtie kw026.sorted.bam -l s2 -p 4 -o kw026.sorted.bam.gtf
+stringtie kw027.sorted.bam -l s2 -p 4 -o kw027.sorted.bam.gtf
+stringtie kw028.sorted.bam -l s2 -p 4 -o kw028.sorted.bam.gtf
+stringtie kw029.sorted.bam -l s2 -p 4 -o kw029.sorted.bam.gtf
+stringtie kw030.sorted.bam -l s2 -p 4 -o kw030.sorted.bam.gtf
+stringtie kw031.sorted.bam -l s2 -p 4 -o kw031.sorted.bam.gtf
+stringtie kw032.sorted.bam -l s2 -p 4 -o kw032.sorted.bam.gtf
+stringtie kw033.sorted.bam -l s2 -p 4 -o kw033.sorted.bam.gtf
+stringtie kw034.sorted.bam -l s2 -p 4 -o kw034.sorted.bam.gtf
+stringtie kw035.sorted.bam -l s2 -p 4 -o kw035.sorted.bam.gtf
+stringtie kw036.sorted.bam -l s2 -p 4 -o kw036.sorted.bam.gtf
+stringtie kw037.sorted.bam -l s2 -p 4 -o kw037.sorted.bam.gtf
+stringtie kw038.sorted.bam -l s2 -p 4 -o kw038.sorted.bam.gtf
+stringtie kw039.sorted.bam -l s2 -p 4 -o kw039.sorted.bam.gtf
+stringtie kw040.sorted.bam -l s2 -p 4 -o kw040.sorted.bam.gtf
+stringtie kw041.sorted.bam -l s2 -p 4 -o kw041.sorted.bam.gtf
+stringtie kw042.sorted.bam -l s2 -p 4 -o kw042.sorted.bam.gtf
+stringtie kw043.sorted.bam -l s2 -p 4 -o kw043.sorted.bam.gtf
+stringtie kw044.sorted.bam -l s2 -p 4 -o kw044.sorted.bam.gtf
+stringtie kw045.sorted.bam -l s2 -p 4 -o kw045.sorted.bam.gtf
+stringtie kw046.sorted.bam -l s2 -p 4 -o kw046.sorted.bam.gtf
+stringtie kw047.sorted.bam -l s2 -p 4 -o kw047.sorted.bam.gtf
+stringtie kw048.sorted.bam -l s2 -p 4 -o kw048.sorted.bam.gtf
+stringtie kw049.sorted.bam -l s2 -p 4 -o kw049.sorted.bam.gtf
+stringtie kw050.sorted.bam -l s2 -p 4 -o kw050.sorted.bam.gtf
+stringtie kw051.sorted.bam -l s2 -p 4 -o kw051.sorted.bam.gtf
+stringtie kw052.sorted.bam -l s2 -p 4 -o kw052.sorted.bam.gtf
+stringtie kw053.sorted.bam -l s2 -p 4 -o kw053.sorted.bam.gtf
+stringtie kw054.sorted.bam -l s2 -p 4 -o kw054.sorted.bam.gtf
+stringtie kw055.sorted.bam -l s2 -p 4 -o kw055.sorted.bam.gtf
+stringtie kw056.sorted.bam -l s2 -p 4 -o kw056.sorted.bam.gtf
+stringtie kw057.sorted.bam -l s2 -p 4 -o kw057.sorted.bam.gtf
+stringtie kw058.sorted.bam -l s2 -p 4 -o kw058.sorted.bam.gtf
+stringtie kw059.sorted.bam -l s2 -p 4 -o kw059.sorted.bam.gtf
+stringtie kw060.sorted.bam -l s2 -p 4 -o kw060.sorted.bam.gtf
+stringtie kw061.sorted.bam -l s2 -p 4 -o kw061.sorted.bam.gtf
+stringtie kw062.sorted.bam -l s2 -p 4 -o kw062.sorted.bam.gtf
+stringtie kw063.sorted.bam -l s2 -p 4 -o kw063.sorted.bam.gtf
+stringtie kw064.sorted.bam -l s2 -p 4 -o kw064.sorted.bam.gtf
+stringtie kw065.sorted.bam -l s2 -p 4 -o kw065.sorted.bam.gtf
+stringtie kw066.sorted.bam -l s2 -p 4 -o kw066.sorted.bam.gtf
+stringtie kw067.sorted.bam -l s2 -p 4 -o kw067.sorted.bam.gtf
+stringtie kw068.sorted.bam -l s2 -p 4 -o kw068.sorted.bam.gtf
+stringtie kw069.sorted.bam -l s2 -p 4 -o kw069.sorted.bam.gtf
+stringtie kw070.sorted.bam -l s2 -p 4 -o kw070.sorted.bam.gtf
