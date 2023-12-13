@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#SBATCH --job-name=5_stringtie2_calpoly
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 20
+#SBATCH -t 14-00:00:00
+#SBATCH --exclusive
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+
+module purge
+module load biocontainers
+module load stringtie/2.1.7
+
+cd /scratch/bell/lee3617/kw/3_deg_pipeline/reads/calpoly_rnaspades
+
+# merge all transcripts from all samples
+stringtie --merge -p 20 \
+-o stringtie_all_merged_calpoly_rnaspades.gtf calpoly_mergelist.txt
+
+# mergelist is a file of all the .gtf file names 
