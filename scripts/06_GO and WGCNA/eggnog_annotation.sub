@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --job-name=eggNOG-mapper
+#SBATCH -A beagle
+#SBATCH -N 1
+#SBATCH -n 16
+#SBATCH -t 14-00:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+#SBATCH --output slurm-%x-%J.out
+cd $SLURM_SUBMIT_DIR
+module purge
+module load biocontainers
+module load eggnog-mapper/2.1.7
+
+
+### script to annotate the entire transcriptome 
+emapper.py -m diamond --cpu 16 -i ./rnaspades_assembly_calpoly_singleline.fasta --itype genome --output rnaspades_eggnog_annot -m diamond
+
+
+### script to annotate the degs
+emapper.py -m diamond --cpu 16 -i ../rnaspades_degs_transcriptome.fasta --itype genome --output eggnot_annot -m diamond
