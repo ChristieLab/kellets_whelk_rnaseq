@@ -7,12 +7,12 @@ Corresponding article [place holder for citation]
 
 ## Scripts
 Code for project is in [scripts](https://github.com/ChristieLab/kellets_whelk_rnaseq/tree/main/scripts). Analyses are split up into directories: 
-1. _**Study system.** _R code associated with figure 1.
+1. _**Study system.**_ R code associated with figure 1.
 2. _**Sequence processing.**_ Process RNA transcripts and conduct DEG analysis
 3. _**SNP calling.**_ Contains for SNP variant calling using ANGSD 
 4. _**Population structure and population assignment.**_ R codes analyszing transcriptome-derived SNPs using snpR (Figure 2)
 5. _**Candidate loci driving differntiation.**_  R codes analyszing transcriptome-derived SNPs using snpR, population assignment using rubias and ranger (Figure 3). R code analyzing the TPI gene (Figure 4)
-6. _**Gene Ontology and WGCNA.** _R codes associated with analyses of expression data (Supplemental)  
+6. _**Gene Ontology and WGCNA.**_ R codes associated with analyses of expression data (Supplemental)  
   
 
 ## Data
