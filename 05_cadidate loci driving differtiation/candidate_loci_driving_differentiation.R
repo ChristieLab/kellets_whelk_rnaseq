@@ -15,6 +15,8 @@ library(cowplot)
 library(ggplotify)
 setwd("~/KW/09_angsd")
 
+
+## Read in VCF for both all-SNPs and DEG-SNPs 
 sample_meta <- read.csv("~/KW/09_angsd/neutral/sample_info.csv")
 deg_vcf <- import.snpR.data("~/KW/09_angsd/vcfs/kw_degsnps.vcf", sample.meta = sample_meta)
 all_vcf <- import.snpR.data("~/KW/09_angsd/vcfs/kw_allsnps.vcf", sample.meta = sample_meta)
@@ -34,7 +36,6 @@ plot(density(rf_all$models$.base_.base$model$variable.importance))
 table(rf_deg$models$.base_.base$predictions)
 table(rf_all$models$.base_.base$predictions)
 
-
 # use metadata to find DEGs 
 deg_monnap_meta <- snp.meta(deg_monnap)
 deg_monnap_snp_pos <- paste0(deg_monnap_meta$CHROM, "_", deg_monnap_meta$position)
@@ -52,10 +53,9 @@ median(all_monnap_fst$pairwise$fst) #0.02762004
 median(deg_monnap_fst$pairwise$fst) #0.02382336
 
 # double checking the dataframe 
-rf_all$models$.base_.base$model$variable.importance
-all_monnap_fst$pairwise$snp_pos <- paste0(all_monnap_fst$pairwise$CHROM, "_",all_monnap_fst$pairwise$position)
-identical(all_monnap_fst$pairwise$snp_pos, all_monnap_snp_pos)
-
+# rf_all$models$.base_.base$model$variable.importance
+# all_monnap_fst$pairwise$snp_pos <- paste0(all_monnap_fst$pairwise$CHROM, "_",all_monnap_fst$pairwise$position)
+# identical(all_monnap_fst$pairwise$snp_pos, all_monnap_snp_pos)
 
 ### create importance plot ====
 rfdf <- as.data.frame(cbind(all_monnap_fst$pairwise$CHROM, 
@@ -71,25 +71,11 @@ rfdf$FST <- as.numeric(rfdf$FST)
 rfdf$DEG  <- as.factor(rfdf$DEG)
 
 ## Investigating the outlier 
-
 outlier_contig <- snp.meta(all_monnap)[snp.meta(all_monnap)$CHROM == "NODE_170811_length_1937_cov_17418.954399_g51510_i0", ]
 
 outlier_contig_fst <- rfdf[rfdf$contig == "NODE_170811_length_1937_cov_17418.954399_g51510_i0", ]
 
-
-#saveRDS(rfdf, "rfdf.rds")
-#rfdf <- readRDS("rfdf.rds")
-
-# saveRDS(outlier_contig_fst, "/Users/andy/KW/14_tpi/tpi_rf.rds")
-
-## COMMAND to get sequence to blast to find gene name of outlier 
-# grep -A1 ">NODE_170811_length_1937_cov_17418.954399_g51510_i0" rnaspades_assembly_calpoly_annotated_swissprot_nr.fasta
-
-# triosephosphate isomerase
-
-
-# plot(rfdf$Importance, col= factor(rfdf$DEG), ylab="Importance in random forest", main="Importance of each SNP in random forest model (MON and NAP only)")
-
+## create plots 
 # plot importance value next to box plot of all snps and degs only 
 rfdf <- rfdf[order(rfdf$Importance),]
 
@@ -130,19 +116,18 @@ p_rf <- p_rf_fst +
   )
 
 
-  
-
 # t_grob <- grobTree(textGrob("Triosephosphate Isomerase", x = 0.7, y= 0.95, hjust=0, gp=gpar(col="black", fontsize=8, fontface="italic")))
 #p_rf + annotation_custom(t_grob)
 
-### from angsdsnp.r LFC VS FST plots
-# FST vs. LFC plot ==========
+
+## Create the FST vs. LFC plot ==========
 ## get FST values and LFC for each contig 
 all_monnap <- calc_pairwise_fst(all_monnap, facets="site")
 deg_monnap <- calc_pairwise_fst(deg_monnap, facets="site")
 all_monnap_fst <- get.snpR.stats(all_monnap, facets="site", stats="fst")
 deg_monnap_fst <- get.snpR.stats(deg_monnap, facets="site", stats="fst")
 
+# combine the df
 x <- all_monnap_fst$pairwise
 z <- deg_monnap_fst$pairwise
 res <- readRDS(file = "deseq_monnap.rds")
@@ -150,7 +135,6 @@ res$CHROM <- rownames(res)
 temp <- do.call(rbind, strsplit(res$CHROM, "\\|"))
 res$CHROM <- temp[,1]
 y <- res
-
 df <- merge(x, y, by="CHROM")
 View(df)
 
@@ -164,7 +148,7 @@ df$log2FoldChange
 
 
 # deg snps only 
-deg_df <- merge(z, y, by="CHROM")
+# deg_df <- merge(z, y, by="CHROM")
 # p2 <- ggplot(deg_df) +
 #    geom_point(aes(x=fst, y=log2FoldChange), size = 0.4) + 
 #    geom_smooth(method=lm, aes(x=fst, y=log2FoldChange)) +
@@ -292,4 +276,3 @@ plot_grid(
   labels = "AUTO"
 )
 dev.off()
-
