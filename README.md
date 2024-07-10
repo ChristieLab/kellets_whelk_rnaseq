@@ -16,4 +16,4 @@ Code for the project are split up into directories:
   
 
 ## Data
-All raw data and sample metadata generated for this project are stored in the NCBI Short Read Archive (SRA) under project PRJNA1000198 (https://www.ncbi.nlm.nih.gov/sra/PRJNA1000198). VCF files for the all-SNPs and DEG-SNPs datasets are deposited in Dryad (https://doi.org/10.5061/dryad.qbzkh18s3). 
+All raw data and sample metadata generated for this project are stored in the NCBI Short Read Archive (SRA) under project PRJNA1000198 (https://www.ncbi.nlm.nih.gov/sra/PRJNA1000198). VCF files for the all-SNPs and DEG-SNPs datasets are deposited in Dryad (https://doi.org/10.5061/dryad.qbzkh18s3; currently embargoed). 
