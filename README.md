@@ -16,4 +16,4 @@ Code for project is in [scripts](https://github.com/ChristieLab/kellets_whelk_rn
   
 
 ## Data
-All raw data and sample metadata generated for this project are stored in the NCBI Short Read Archive (SRA) under project PRJNA1000198 (https://www.ncbi.nlm.nih.gov/sra/PRJNA1000198). VCF files for the all-SNPs and DEG-SNPs datasets are deposited in Dryad (https://doi.org/10.5061/dryad.qbzkh18s3). (https://github.com/ChristieLab/kellets_whelk_rnaseq/assets/86313796/02b795ee-c350-43cf-bb37-8bee7a0f3e9b)
+All raw data and sample metadata generated for this project are stored in the NCBI Short Read Archive (SRA) under project PRJNA1000198 (https://www.ncbi.nlm.nih.gov/sra/PRJNA1000198). VCF files for the all-SNPs and DEG-SNPs datasets are deposited in Dryad (https://doi.org/10.5061/dryad.qbzkh18s3). 
