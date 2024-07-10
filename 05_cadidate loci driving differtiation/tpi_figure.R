@@ -1,12 +1,9 @@
-
-
-# Install other required packages
-# install.packages("ggplot2")
-# install.packages("seqinr")
-# BiocManager::install("Biostrings")
-# BiocManager::install("BSgenome")
-# BiocManager::install("GenomeInfoDb")
-
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#+++ Explore TPI, a putatively adaptive gene   +++#
+#+++ Code written by Andy Lee
+#+++ Last Updated 7/10/2024
+#+++ All rights reserved, contact andymuanlee@gmail.com  
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 # Load the packages
 library(GenomeInfoDb)
 library(Biostrings)
@@ -225,16 +222,6 @@ p_af <- ggplot(data = comb, aes(x = Site, y = Frequency, group = Gene, color=orf
 pdf("~/KW/figures/figure 4 /p_af.pdf", width = 4, height = 4)
 p_af
 dev.off()
-
-# ggplot(data = subset_df, aes(x = Site, y = Frequency, group = Gene, color = Gene)) +
-#   geom_line() +
-#   geom_point() + 
-#   ylim (0, 1) +
-#   labs(x = "Site", y = "Frequency") +
-#   theme_minimal()
-
-# plot_clusters(tpi_snps, facets="site")
-
 
 ### double check with some random alleles ====
 sample <- deg_monnap[sample(nrow(deg_monnap), 1000, FALSE)]
