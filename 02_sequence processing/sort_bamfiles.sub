@@ -1,0 +1,85 @@
+#!/bin/bash
+
+#SBATCH --job-name=3_sort_sam_rnaspadesannot
+#SBATCH -A standby
+#SBATCH -N 1
+#SBATCH -n 20
+#SBATCH -t 4:00:00
+#SBATCH --exclusive
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=lee3617@purdue.edu
+#SBATCH --output slurm-%J-%x.out
+
+cd $SLURM_SUBMIT_DIR # set this if not using sed in Makefile
+module load biocontainers
+module load samtools/1.8
+samtools view -Su kw001.sam | samtools sort -o kw001.sorted.bam
+samtools view -Su kw002.sam | samtools sort -o kw002.sorted.bam
+samtools view -Su kw003.sam | samtools sort -o kw003.sorted.bam
+samtools view -Su kw004.sam | samtools sort -o kw004.sorted.bam
+samtools view -Su kw005.sam | samtools sort -o kw005.sorted.bam
+samtools view -Su kw006.sam | samtools sort -o kw006.sorted.bam
+samtools view -Su kw007.sam | samtools sort -o kw007.sorted.bam
+samtools view -Su kw008.sam | samtools sort -o kw008.sorted.bam
+samtools view -Su kw009.sam | samtools sort -o kw009.sorted.bam
+samtools view -Su kw010.sam | samtools sort -o kw010.sorted.bam
+samtools view -Su kw011.sam | samtools sort -o kw011.sorted.bam
+samtools view -Su kw012.sam | samtools sort -o kw012.sorted.bam
+samtools view -Su kw013.sam | samtools sort -o kw013.sorted.bam
+samtools view -Su kw014.sam | samtools sort -o kw014.sorted.bam
+samtools view -Su kw015.sam | samtools sort -o kw015.sorted.bam
+samtools view -Su kw016.sam | samtools sort -o kw016.sorted.bam
+samtools view -Su kw017.sam | samtools sort -o kw017.sorted.bam
+samtools view -Su kw018.sam | samtools sort -o kw018.sorted.bam
+samtools view -Su kw019.sam | samtools sort -o kw019.sorted.bam
+samtools view -Su kw020.sam | samtools sort -o kw020.sorted.bam
+samtools view -Su kw021.sam | samtools sort -o kw021.sorted.bam
+samtools view -Su kw022.sam | samtools sort -o kw022.sorted.bam
+samtools view -Su kw023.sam | samtools sort -o kw023.sorted.bam
+samtools view -Su kw024.sam | samtools sort -o kw024.sorted.bam
+samtools view -Su kw025.sam | samtools sort -o kw025.sorted.bam
+samtools view -Su kw026.sam | samtools sort -o kw026.sorted.bam
+samtools view -Su kw027.sam | samtools sort -o kw027.sorted.bam
+samtools view -Su kw028.sam | samtools sort -o kw028.sorted.bam
+samtools view -Su kw029.sam | samtools sort -o kw029.sorted.bam
+samtools view -Su kw030.sam | samtools sort -o kw030.sorted.bam
+samtools view -Su kw031.sam | samtools sort -o kw031.sorted.bam
+samtools view -Su kw032.sam | samtools sort -o kw032.sorted.bam
+samtools view -Su kw033.sam | samtools sort -o kw033.sorted.bam
+samtools view -Su kw034.sam | samtools sort -o kw034.sorted.bam
+samtools view -Su kw035.sam | samtools sort -o kw035.sorted.bam
+samtools view -Su kw036.sam | samtools sort -o kw036.sorted.bam
+samtools view -Su kw037.sam | samtools sort -o kw037.sorted.bam
+samtools view -Su kw038.sam | samtools sort -o kw038.sorted.bam
+samtools view -Su kw039.sam | samtools sort -o kw039.sorted.bam
+samtools view -Su kw040.sam | samtools sort -o kw040.sorted.bam
+samtools view -Su kw041.sam | samtools sort -o kw041.sorted.bam
+samtools view -Su kw042.sam | samtools sort -o kw042.sorted.bam
+samtools view -Su kw043.sam | samtools sort -o kw043.sorted.bam
+samtools view -Su kw044.sam | samtools sort -o kw044.sorted.bam
+samtools view -Su kw045.sam | samtools sort -o kw045.sorted.bam
+samtools view -Su kw046.sam | samtools sort -o kw046.sorted.bam
+samtools view -Su kw047.sam | samtools sort -o kw047.sorted.bam
+samtools view -Su kw048.sam | samtools sort -o kw048.sorted.bam
+samtools view -Su kw049.sam | samtools sort -o kw049.sorted.bam
+samtools view -Su kw050.sam | samtools sort -o kw050.sorted.bam
+samtools view -Su kw051.sam | samtools sort -o kw051.sorted.bam
+samtools view -Su kw052.sam | samtools sort -o kw052.sorted.bam
+samtools view -Su kw053.sam | samtools sort -o kw053.sorted.bam
+samtools view -Su kw054.sam | samtools sort -o kw054.sorted.bam
+samtools view -Su kw055.sam | samtools sort -o kw055.sorted.bam
+samtools view -Su kw056.sam | samtools sort -o kw056.sorted.bam
+samtools view -Su kw057.sam | samtools sort -o kw057.sorted.bam
+samtools view -Su kw058.sam | samtools sort -o kw058.sorted.bam
+samtools view -Su kw059.sam | samtools sort -o kw059.sorted.bam
+samtools view -Su kw060.sam | samtools sort -o kw060.sorted.bam
+samtools view -Su kw061.sam | samtools sort -o kw061.sorted.bam
+samtools view -Su kw062.sam | samtools sort -o kw062.sorted.bam
+samtools view -Su kw063.sam | samtools sort -o kw063.sorted.bam
+samtools view -Su kw064.sam | samtools sort -o kw064.sorted.bam
+samtools view -Su kw065.sam | samtools sort -o kw065.sorted.bam
+samtools view -Su kw066.sam | samtools sort -o kw066.sorted.bam
+samtools view -Su kw067.sam | samtools sort -o kw067.sorted.bam
+samtools view -Su kw068.sam | samtools sort -o kw068.sorted.bam
+samtools view -Su kw069.sam | samtools sort -o kw069.sorted.bam
+samtools view -Su kw070.sam | samtools sort -o kw070.sorted.bam
