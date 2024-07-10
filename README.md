@@ -6,7 +6,7 @@ This is a project analyzing population structure and genetic adaptation of Kelle
 Corresponding article [place holder for citation]
 
 ## Scripts
-Code for project is in [scripts](https://github.com/ChristieLab/kellets_whelk_rnaseq/tree/main/scripts). Analyses are split up into directories: 
+Code for the project are split up into directories: 
 1. _**Study system.**_ R code associated with figure 1.
 2. _**Sequence processing.**_ Process RNA transcripts and conduct DEG analysis
 3. _**SNP calling.**_ Contains for SNP variant calling using ANGSD 
