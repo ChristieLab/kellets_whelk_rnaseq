@@ -3,7 +3,7 @@
 ## Project description
 This is a project analyzing population structure and genetic adaptation of Kellet's whelks (Kelletia kelletii)  --- a range expanding marine species with high gene flow potential. We performed a series of crosses on Kellet's whelks collected from its historical and recently colonized range, and conducted RNA-Seq on 70 offspring that we reared in a common garden environment. We also used transcriptome derived SNPs to examine population structure and genetic adaptation. 
 
-Corresponding article [place holder for citation]
+Corresponding article https://onlinelibrary.wiley.com/doi/full/10.1111/mec.17511
 
 ## Scripts
 Code for the project are split up into directories: 
@@ -16,4 +16,4 @@ Code for the project are split up into directories:
   
 
 ## Data
-All raw data and sample metadata generated for this project are stored in the NCBI Short Read Archive (SRA) under project PRJNA1000198 (https://www.ncbi.nlm.nih.gov/sra/PRJNA1000198). VCF files for the all-SNPs and DEG-SNPs datasets are deposited in Dryad (https://doi.org/10.5061/dryad.qbzkh18s3; currently embargoed). 
+All raw data and sample metadata generated for this project are stored in the NCBI Short Read Archive (SRA) under project PRJNA1000198 (https://www.ncbi.nlm.nih.gov/sra/PRJNA1000198). VCF files for the all-SNPs and DEG-SNPs datasets are deposited in Dryad (https://doi.org/10.5061/dryad.qbzkh18s3). 
